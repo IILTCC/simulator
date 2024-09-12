@@ -1,4 +1,6 @@
-﻿using simulator_main.icd;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using simulator_main.icd;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,20 +11,36 @@ namespace simulator_main.services
 {
     public class BitstreamService : IBitstreamService
     {
-        private Dictionary<int, string> IcdDictionary;
+        private Dictionary<int, Type> IcdDictionary;
         public BitstreamService()
         {
-            this.IcdDictionary = new Dictionary<int, string>();
-            IcdDictionary.Add(0,"mask1.json");
-            IcdDictionary.Add(0,"mask2.json");
-            IcdDictionary.Add(0,"cor1.json");
-            IcdDictionary.Add(0,"cor2.json");
+            this.IcdDictionary = new Dictionary<int, Type>();
+            IcdDictionary.Add(0,typeof(BaseIcd));
+            IcdDictionary.Add(1,typeof(CorellatorIcd));
+   
         }
         public async Task<string> GetBitstream(int icdId)
         {
-
-            StreamReader icdFil = File.OpenText("../ice_repo/"+IcdDictionary[icdId]);
-            return "";
+            string text = File.ReadAllText("./icd_repo/" + IcdDictionary[icdId]);
+            //Console.WriteLine(JToken.Parse(text));
+            foreach(var item in JToken.Parse(text))
+            {
+                Console.WriteLine(item);
+                Console.WriteLine();
+            }
+            /*
+            using (StreamReader file = File.OpenText("./icd_repo/" + IcdDictionary[icdId]))
+            using (JsonTextReader reader = new JsonTextReader(file))
+            {
+                JArray parameter = (JArray)(JToken.ReadFrom(reader));
+                //Console.WriteLine(o2);
+                foreach(var item in parameter)
+                {
+                    Console.WriteLine(JsonConvert.DeserializeObject<BaseIcd>(item));
+                    Console.WriteLine(item);
+                }
+            }
+            */
         }
     }
 }

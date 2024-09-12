@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_main\\simulator_main.csproj": {}
+    "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_libary\\simulator_libary.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_main\\simulator_main.csproj": {
+    "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_libary\\simulator_libary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_main\\simulator_main.csproj",
-        "projectName": "simulator_main",
-        "projectPath": "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_main\\simulator_main.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_libary\\simulator_libary.csproj",
+        "projectName": "simulator_libary",
+        "projectPath": "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_libary\\simulator_libary.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_main\\obj\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_libary\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -45,16 +45,6 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
-          "dependencies": {
-            "Newtonsoft.Json": {
-              "target": "Package",
-              "version": "[13.0.3, )"
-            },
-            "Swashbuckle.AspNetCore": {
-              "target": "Package",
-              "version": "[5.6.3, )"
-            }
-          },
           "imports": [
             "net461",
             "net462",
@@ -66,9 +56,6 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
