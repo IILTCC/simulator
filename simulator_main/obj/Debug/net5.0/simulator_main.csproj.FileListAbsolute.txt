@@ -32,3 +32,5 @@ C:\Users\user\Desktop\miniproj\mainproject\simulator\simulator_main\obj\Debug\ne
 C:\Users\user\Desktop\miniproj\mainproject\simulator\simulator_main\obj\Debug\net5.0\ref\simulator_main.dll
 C:\Users\user\Desktop\miniproj\mainproject\simulator\simulator_main\obj\Debug\net5.0\simulator_main.pdb
 C:\Users\user\Desktop\miniproj\mainproject\simulator\simulator_main\obj\Debug\net5.0\simulator_main.genruntimeconfig.cache
+C:\Users\user\Desktop\miniproj\mainproject\simulator\simulator_main\bin\Debug\net5.0\simulator_libary.dll
+C:\Users\user\Desktop\miniproj\mainproject\simulator\simulator_main\bin\Debug\net5.0\simulator_libary.pdb

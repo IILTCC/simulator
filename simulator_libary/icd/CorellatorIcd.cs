@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 
 namespace simulator_main.icd
 {
-    public class CorellatorIcd
+    public class CorellatorIcd : BaseIcd
     {
         public int Id { get; set; }
         public string Error { get; set; }
         public int CorrValue { get; set; }
-        public byte Mask { get; set; }
         public string Identifier { get; set; }
         public string Type { get; set; }
         public string Units { get; set; }
@@ -18,9 +17,6 @@ namespace simulator_main.icd
         public int PhysicalLimitMax { get; set; }
         public int PhysicalLimitDef { get; set; }
         public string InterfaceType { get; set; }
-        public int Size { get; set; }
-        public int Min { get; set; }
-        public int Max { get; set; }
         public int Length { get; set; }
         public string Enum { get; set; }
 

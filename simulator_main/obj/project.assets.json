@@ -84,6 +84,19 @@
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
         ]
+      },
+      "simulator_libary/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "compile": {
+          "bin/placeholder/simulator_libary.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/simulator_libary.dll": {}
+        }
       }
     }
   },
@@ -224,12 +237,18 @@
         "swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512",
         "swashbuckle.aspnetcore.swaggerui.nuspec"
       ]
+    },
+    "simulator_libary/1.0.0": {
+      "type": "project",
+      "path": "../simulator_libary/simulator_libary.csproj",
+      "msbuildProject": "../simulator_libary/simulator_libary.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net5.0": [
       "Newtonsoft.Json >= 13.0.3",
-      "Swashbuckle.AspNetCore >= 5.6.3"
+      "Swashbuckle.AspNetCore >= 5.6.3",
+      "simulator_libary >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -266,7 +285,11 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_libary\\simulator_libary.csproj": {
+              "projectPath": "C:\\Users\\user\\Desktop\\miniproj\\mainproject\\simulator\\simulator_libary\\simulator_libary.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
