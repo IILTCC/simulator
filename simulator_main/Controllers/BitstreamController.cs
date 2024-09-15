@@ -19,11 +19,11 @@ namespace simulator_main.Controllers
         }
 
 
-        [HttpGet("getSimulation{icdId}")]
+        [HttpGet("getSimulation{icdName}")]
        
-        public string GetBitstream(int icdId)
+        public string GetBitstream(string icdName)
         {
-            return  _BitstreamService.GetPacketData(icdId);
+            return  _BitstreamService.GetPacketData(icdName);
         }
     }
 }

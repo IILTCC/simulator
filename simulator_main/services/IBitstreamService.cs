@@ -8,7 +8,7 @@ namespace simulator_main.services
 {
     public interface IBitstreamService
     {
-        public string GetPacketData(int icdId);
+        public string GetPacketData(string icdName);
 
     }
 }
