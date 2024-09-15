@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace simulator_main.icd
 {
-    public class CorellatorIcd : BaseIcd
+    public class FiberBoxIcd : BaseIcd
     {
         public int Id { get; set; }
         public string Error { get; set; }

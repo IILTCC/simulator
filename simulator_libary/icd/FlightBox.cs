@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace simulator_main.icd
 {
-    public class MaskIcd : BaseIcd
+    public class FlightBoxIcd : BaseIcd
     {
         public int Id { get; set; }
         public string Name { get; set; }

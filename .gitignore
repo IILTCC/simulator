@@ -1,8 +1,14 @@
-.vs/
 /simulator_main/bin
 /simulator_main/obj
 /simulator_main/bin
 /simulator_main/bin
+
+!/simulator_main/obj/project.assets.json
+!/simulator_main/obj/project.nuget.cache
+!/simulator_main/obj/simulator_main.csproj.nuget.dgspec.json
+!/simulator_main/obj/simulator_main.csproj.nuget.g.props
+!/simulator_main/obj/simulator_main.csproj.nuget.g.targets
+
 
 /simulator_testing/bin/
 /simulator_testing/obj/
@@ -11,6 +17,3 @@
 /simulator_libary/obj
 
 
-*.sln
-*.csproj
-*.user
