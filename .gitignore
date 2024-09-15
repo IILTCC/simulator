@@ -1,0 +1,16 @@
+.vs/
+/simulator_main/bin
+/simulator_main/obj
+/simulator_main/bin
+/simulator_main/bin
+
+/simulator_testing/bin/
+/simulator_testing/obj/
+
+/simulator_libary/bin
+/simulator_libary/obj
+
+
+*.sln
+*.csproj
+*.user
