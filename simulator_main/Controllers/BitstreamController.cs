@@ -19,11 +19,11 @@ namespace simulator_main.Controllers
         }
 
 
-        [HttpGet("getSimulation{icdId}")]
+        [HttpGet("getSimulation{icdName}")]
        
-        public async Task<string> GetBitstream(int icdId)
+        public string GetBitstream(string icdName)
         {
-            return await _BitstreamService.GetBitstream(icdId);
+            return  _BitstreamService.GetPacketData(icdName);
         }
     }
 }
