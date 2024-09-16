@@ -7,11 +7,13 @@ namespace simulator_main.icd
 {
     public class BaseIcd
     {
-        public int Location { get; set; }
-        public string Mask { get; set; }
-        public int Size { get; set; }
-        public int Min { get; set; }
-        public int Max { get; set; }
+        public virtual int GetLocation() { return -1; }
+        public virtual string GetMask() { return string.Empty; }
+        public virtual int GetSize() { return -1; }
+        public virtual int GetMin() { return -1; }
+        public virtual int GetMax() { return -1; }
+        public virtual string GetName() { return string.Empty; }
+        public virtual int GetCorrValue() { return -1; }
 
     }
 }

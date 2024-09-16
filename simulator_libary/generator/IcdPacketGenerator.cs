@@ -38,17 +38,16 @@ namespace simulator_main.icd
                 return string.Empty;
             }
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
-            int sequenceArraySize = icdRows[icdRows.Count - 1].Location + 1 + icdRows[icdRows.Count - 1].Size / 9;
+            int sequenceArraySize = icdRows[icdRows.Count - 1].GetLocation() + 1 + icdRows[icdRows.Count - 1].GetSize() / 9;
             byte[] finalSequence = new byte[sequenceArraySize];
-
             foreach(IcdType row in icdRows)
             {
-                int randomParamValue = rnd.Next(row.Min, row.Max + 1);
+                int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
                 byte[] currentValue = GetAccurateByte(randomParamValue);
-                
-                if (row.Mask != string.Empty) 
+
+                if (row.GetMask() != string.Empty) 
                 {
-                    byte mask = Convert.ToByte(row.Mask, 2);
+                    byte mask = Convert.ToByte(row.GetMask(), 2);
                     // push currentValue to be in mask range
                     while ((mask & 0b00000001) != 1)
                     {
@@ -59,7 +58,7 @@ namespace simulator_main.icd
                 }
                 for(int i = 0;i<currentValue.Length;i++)
                     // append current value of all sizes to final sequence
-                    finalSequence[row.Location+i] = (byte)(finalSequence[row.Location+i] | currentValue[i]);
+                    finalSequence[row.GetLocation()+i] = (byte)(finalSequence[row.GetLocation()+i] | currentValue[i]);
             }
 
             string returnString = string.Empty;
