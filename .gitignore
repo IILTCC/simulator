@@ -3,36 +3,8 @@
 /simulator_main/bin
 
 
-/simulator_main/.vs/simulator_main/DesignTimeBuild/.dtbcache.v2
-/simulator_main/.vs/simulator_main/config/applicationhost.config
-
-
-/simulator_main/obj/Debug/net5.0/apphost.exe
-
-/simulator_main/obj/Debug/net5.0/ref/simulator_main.dll
-
-/simulator_main/obj/Debug/net5.0/simulator_main.MvcApplicationPartsAssemblyInfo.cache
-
-/simulator_main/obj/Debug/net5.0/simulator_main.MvcApplicationPartsAssemblyInfo.cs
-
-/simulator_main/obj/Debug/net5.0/simulator_main.RazorTargetAssemblyInfo.cache
-
-/simulator_main/obj/Debug/net5.0/simulator_main.csproj.CopyComplete
-
-/simulator_main/obj/Debug/net5.0/simulator_main.csproj.CoreCompileInputs.cache
-
-/simulator_main/obj/Debug/net5.0/simulator_main.csproj.FileListAbsolute.txt
-
-/simulator_main/obj/Debug/net5.0/simulator_main.dll
-
-/simulator_main/obj/Debug/net5.0/simulator_main.genruntimeconfig.cache
-
-/simulator_main/obj/Debug/net5.0/simulator_main.pdb
-
-/simulator_main/obj/Debug/net5.0/staticwebassets/simulator_main.StaticWebAssets.Manifest.cache
-
-/simulator_main/obj/Debug/net5.0/staticwebassets/simulator_main.StaticWebAssets.xml
-
+/simulator_main/.vs
+/simulator_main/obj
 
 /simulator_libary/bin
 /simulator_libary/obj
