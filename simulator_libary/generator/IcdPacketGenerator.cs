@@ -47,7 +47,7 @@ namespace simulator_main.icd
                 Console.WriteLine("is correlator "+corValue);
                 Console.WriteLine("corvalue "+row.GetCorrValue());
                 Console.WriteLine("mask "+row.GetMask());
-
+                Console.WriteLine("error "+row.GetError());
                 if (row.GetName() == "correlator")
                 {
                     Console.WriteLine("found core ******************");
@@ -56,6 +56,9 @@ namespace simulator_main.icd
                 //ilegal icd
                 if (row.GetCorrValue() != -1 && corValue == -1)
                     return;
+
+                if ((row.GetCorrValue() == -1 || row.GetCorrValue() == corValue) && row.GetError()==string.Empty)
+                {
 
 
                     Console.WriteLine("enterd");
@@ -77,7 +80,7 @@ namespace simulator_main.icd
                     for (int i = 0; i < currentValue.Length; i++)
                         // append current value of all sizes to final sequence
                         finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
-                
+                }
             }
         }
         public string GeneratePacketBitData(string json)

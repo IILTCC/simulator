@@ -14,6 +14,7 @@ namespace simulator_main.icd
         public virtual int GetMax() { return -1; }
         public virtual string GetName() { return string.Empty; }
         public virtual int GetCorrValue() { return -1; }
-
+        public virtual string GetError() { return string.Empty; }
+        
     }
 }
