@@ -26,6 +26,38 @@ namespace simulator_main.icd
             Array.Resize<byte>(ref startValue, size==0?1:size);
             return startValue;
         }
+        private string ByteArrayToString(byte[] byteArray)
+        {
+            string returnString = string.Empty;
+            foreach (byte item in byteArray)
+                returnString += Convert.ToString(item, 2).PadLeft(8, '0');
+            returnString = returnString.Remove(returnString.Length - 1);
+            return returnString;
+        }
+        private byte[] GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence)
+        {
+            foreach (IcdType row in icdRows)
+            {
+                int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
+                byte[] currentValue = GetAccurateByte(randomParamValue);
+
+                if (row.GetMask() != string.Empty)
+                {
+                    byte mask = Convert.ToByte(row.GetMask(), 2);
+                    // push currentValue to be in mask range
+                    while ((mask & 0b00000001) != 1)
+                    {
+                        mask = (byte)(mask >> 1);
+                        // 0 - assuming if there is a mask, max size of value was less then 8 bits
+                        currentValue[0] = (byte)(currentValue[0] << 1);
+                    }
+                }
+                for (int i = 0; i < currentValue.Length; i++)
+                    // append current value of all sizes to final sequence
+                    finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
+            }
+            return finalSequence;
+        }
         public string GeneratePacketBitData(string json)
         {
             List<IcdType> icdRows;
@@ -40,32 +72,11 @@ namespace simulator_main.icd
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
             int sequenceArraySize = icdRows[icdRows.Count - 1].GetLocation() + 1 + icdRows[icdRows.Count - 1].GetSize() / 9;
             byte[] finalSequence = new byte[sequenceArraySize];
-            foreach(IcdType row in icdRows)
-            {
-                int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
-                byte[] currentValue = GetAccurateByte(randomParamValue);
 
-                if (row.GetMask() != string.Empty) 
-                {
-                    byte mask = Convert.ToByte(row.GetMask(), 2);
-                    // push currentValue to be in mask range
-                    while ((mask & 0b00000001) != 1)
-                    {
-                        mask = (byte)(mask >> 1);
-                        // 0 - assuming if there is a mask, max size of value was less then 8 bits
-                        currentValue[0] = (byte)(currentValue[0] << 1);
-                    }
-                }
-                for(int i = 0;i<currentValue.Length;i++)
-                    // append current value of all sizes to final sequence
-                    finalSequence[row.GetLocation()+i] = (byte)(finalSequence[row.GetLocation()+i] | currentValue[i]);
-            }
+            GenerateByteArray(icdRows,ref finalSequence);
 
-            string returnString = string.Empty;
-            foreach(byte item in finalSequence)
-                returnString+= Convert.ToString(item, 2).PadLeft(8, '0');
-            returnString =returnString.Remove(returnString.Length - 1);
-            return returnString;
+            return ByteArrayToString(finalSequence);
+
         }            
     }
 }
