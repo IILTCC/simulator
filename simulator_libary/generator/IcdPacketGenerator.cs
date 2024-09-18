@@ -34,29 +34,51 @@ namespace simulator_main.icd
             returnString = returnString.Remove(returnString.Length - 1);
             return returnString;
         }
-        private byte[] GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence)
+        private void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence)
         {
+            int corValue = -1;
             foreach (IcdType row in icdRows)
             {
-                int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
-                byte[] currentValue = GetAccurateByte(randomParamValue);
+                Console.WriteLine("______________________");
+                Console.WriteLine("location "+row.GetLocation());
+                Console.WriteLine("min "+row.GetMin());
+                Console.WriteLine("max "+row.GetMax());
+                Console.WriteLine("name "+row.GetName());
+                Console.WriteLine("is correlator "+corValue);
+                Console.WriteLine("corvalue "+row.GetCorrValue());
+                Console.WriteLine("mask "+row.GetMask());
 
-                if (row.GetMask() != string.Empty)
+                if (row.GetName() == "correlator")
                 {
-                    byte mask = Convert.ToByte(row.GetMask(), 2);
-                    // push currentValue to be in mask range
-                    while ((mask & 0b00000001) != 1)
-                    {
-                        mask = (byte)(mask >> 1);
-                        // 0 - assuming if there is a mask, max size of value was less then 8 bits
-                        currentValue[0] = (byte)(currentValue[0] << 1);
-                    }
+                    Console.WriteLine("found core ******************");
+                    corValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
                 }
-                for (int i = 0; i < currentValue.Length; i++)
-                    // append current value of all sizes to final sequence
-                    finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
+                //ilegal icd
+                if (row.GetCorrValue() != -1 && corValue == -1)
+                    return;
+
+
+                    Console.WriteLine("enterd");
+
+                    int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
+                    byte[] currentValue = GetAccurateByte(randomParamValue);
+
+                    if (row.GetMask() != string.Empty)
+                    {
+                        byte mask = Convert.ToByte(row.GetMask(), 2);
+                        // push currentValue to be in mask range
+                        while ((mask & 0b00000001) != 1)
+                        {
+                            mask = (byte)(mask >> 1);
+                            // 0 - assuming if there is a mask, max size of value was less then 8 bits
+                            currentValue[0] = (byte)(currentValue[0] << 1);
+                        }
+                    }
+                    for (int i = 0; i < currentValue.Length; i++)
+                        // append current value of all sizes to final sequence
+                        finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
+                
             }
-            return finalSequence;
         }
         public string GeneratePacketBitData(string json)
         {
@@ -65,8 +87,9 @@ namespace simulator_main.icd
             {
                 icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                Console.WriteLine(ex);
                 return string.Empty;
             }
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
