@@ -69,7 +69,7 @@ namespace simulator_main.icd
                 }
             }
         }
-        public string GeneratePacketBitData(string json)
+        public string GeneratePacketBitData(string json,float packetDelay,int packetNoise)
         {
             List<IcdType> icdRows;
             try

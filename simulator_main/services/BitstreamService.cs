@@ -36,8 +36,22 @@ namespace simulator_main.services
             // construct the generic icd at runtime
             dynamic icdInstance = Activator.CreateInstance(genericIcdType);
 
-            return icdInstance.GeneratePacketBitData(jsonText);
+            return icdInstance.GeneratePacketBitData(jsonText,0,0);
 
+        }
+        public string GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto)
+        {
+            if (!IcdDictionary.ContainsKey(getSimulationErroDto.IcdName))
+                return "400";
+
+            string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationErroDto.IcdName + ICD_FILE_TYPE);
+
+            // get the icd generic type at run time
+            Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[getSimulationErroDto.IcdName]);
+            // construct the generic icd at runtime
+            dynamic icdInstance = Activator.CreateInstance(genericIcdType);
+
+            return icdInstance.GeneratePacketBitData(jsonText,getSimulationErroDto.PacketDelayAmount,getSimulationErroDto.PacketNoiseAmount);
         }
     }
 }

@@ -18,13 +18,15 @@ namespace simulator_main.Controllers
         {
             _BitstreamService = bitstreamService;
         }
-
-
         [HttpPost("getSimulation")]
-       
         public string GetBitstream([FromBody] GetSimulationDto simulationDto)
         {
             return  _BitstreamService.GetPacketData(simulationDto);
+        }        
+        [HttpPost("getErrorSimulation")]
+        public string GetErrorBitstream([FromBody] GetErrorSimulationDto getErrorSimulationDto)
+        {
+            return  _BitstreamService.GetPacketErrorData(getErrorSimulationDto);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace simulator_main.services
     public interface IBitstreamService
     {
         public string GetPacketData(GetSimulationDto getSimulationDto);
+        public string GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto);
 
     }
 }
