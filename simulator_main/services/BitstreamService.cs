@@ -22,7 +22,6 @@ namespace simulator_main.services
             IcdDictionary.Add("FlightBoxUpIcd", typeof(FlightBoxIcd));
             IcdDictionary.Add("FiberBoxDownIcd", typeof(FiberBoxIcd));
             IcdDictionary.Add("FiberBoxUpIcd", typeof(FiberBoxIcd));
-   
         }
         public string GetPacketData(string icdName)
         {
