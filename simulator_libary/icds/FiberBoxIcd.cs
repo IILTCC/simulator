@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace simulator_main.icd
 {
-    public class FiberBoxIcd : BaseIcd
+    public class FiberBoxIcd : IBaseIcd
     {
         public int Id { get; set; }
         public string Error { get; set; }
@@ -25,13 +25,13 @@ namespace simulator_main.icd
         public int Length { get; set; }
         public string Enum { get; set; }
 
-        public override int GetLocation()
+        public int GetLocation()
         {
             if (this.Location == string.Empty)
                 return -1;
             return Int32.Parse(this.Location); 
         }
-        public override string GetMask() 
+        public string GetMask() 
         {
             // the use of temp is to no change the original value so you can
             // call multiple times this function
@@ -42,11 +42,11 @@ namespace simulator_main.icd
                 retValue = retValue.Substring(1, this.Mask.Length - 2);
             return retValue;
         }
-        public override int GetSize() { return this.Size; }
-        public override int GetMin() { return this.Min; }
-        public override int GetMax() { return this.Max; }
-        public override string GetName() { return this.Identifier; }
-        public override int GetCorrValue() 
+        public int GetSize() { return this.Size; }
+        public int GetMin() { return this.Min; }
+        public int GetMax() { return this.Max; }
+        public string GetName() { return this.Identifier; }
+        public int GetCorrValue() 
         {
             if (this.CorrValue == string.Empty)
                 return -1;
@@ -66,9 +66,13 @@ namespace simulator_main.icd
 
             return Int32.Parse(retValue); 
         }
-        public override string GetError()
+        public string GetError()
         {
             return this.Error;
+        }
+        public bool IsRowCorIdentifier()
+        {
+            return this.Identifier == "correlator";
         }
     }
 }

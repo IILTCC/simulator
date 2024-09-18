@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace simulator_main.icd
 {
-    public class IcdPacketGenerator<IcdType> where IcdType : BaseIcd
+    public class IcdPacketGenerator<IcdType> where IcdType : IBaseIcd
     {
 
         private static Random rnd;
@@ -39,31 +39,17 @@ namespace simulator_main.icd
             int corValue = -1;
             foreach (IcdType row in icdRows)
             {
-                Console.WriteLine("______________________");
-                Console.WriteLine("location "+row.GetLocation());
-                Console.WriteLine("min "+row.GetMin());
-                Console.WriteLine("max "+row.GetMax());
-                Console.WriteLine("name "+row.GetName());
-                Console.WriteLine("is correlator "+corValue);
-                Console.WriteLine("corvalue "+row.GetCorrValue());
-                Console.WriteLine("mask "+row.GetMask());
-                Console.WriteLine("error "+row.GetError());
-                if (row.GetName() == "correlator")
-                {
-                    Console.WriteLine("found core ******************");
-                    corValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
-                }
+
                 //ilegal icd
                 if (row.GetCorrValue() != -1 && corValue == -1)
                     return;
-
+                // check if no error in line and that cor value is good
                 if ((row.GetCorrValue() == -1 || row.GetCorrValue() == corValue) && row.GetError()==string.Empty)
                 {
-
-
-                    Console.WriteLine("enterd");
-
                     int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
+                    if (row.IsRowCorIdentifier())
+                        corValue = randomParamValue;
+                    
                     byte[] currentValue = GetAccurateByte(randomParamValue);
 
                     if (row.GetMask() != string.Empty)
@@ -90,9 +76,8 @@ namespace simulator_main.icd
             {
                 icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                Console.WriteLine(ex);
                 return string.Empty;
             }
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
