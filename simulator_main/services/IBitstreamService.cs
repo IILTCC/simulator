@@ -1,4 +1,5 @@
-﻿using simulator_main.icd;
+﻿using simulator_main.dtos;
+using simulator_main.icd;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace simulator_main.services
 {
     public interface IBitstreamService
     {
-        public string GetPacketData(string icdName);
+        public string GetPacketData(GetSimulationDto getSimulationDto);
 
     }
 }

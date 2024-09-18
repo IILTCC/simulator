@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using simulator_main;
+using simulator_main.dtos;
 using simulator_main.icd;
 using System;
 using System.Collections.Generic;
@@ -23,15 +24,15 @@ namespace simulator_main.services
             IcdDictionary.Add("FiberBoxDownIcd", typeof(FiberBoxIcd));
             IcdDictionary.Add("FiberBoxUpIcd", typeof(FiberBoxIcd));
         }
-        public string GetPacketData(string icdName)
+        public string GetPacketData(GetSimulationDto getSimulationDto)
         {
-            if (!IcdDictionary.ContainsKey(icdName))
+            if (!IcdDictionary.ContainsKey(getSimulationDto.IcdName))
                 return "400";
 
-            string jsonText = File.ReadAllText(ICD_REPO_PATH + icdName + ICD_FILE_TYPE);
+            string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationDto.IcdName + ICD_FILE_TYPE);
 
             // get the icd generic type at run time
-            Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[icdName]);
+            Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[getSimulationDto.IcdName]);
             // construct the generic icd at runtime
             dynamic icdInstance = Activator.CreateInstance(genericIcdType);
 
