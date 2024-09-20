@@ -9,8 +9,6 @@ namespace simulator_main.icd
 {
     public class IcdPacketGenerator<IcdType> where IcdType : IBaseIcd
     {
-        const int ERROR_RANDOMNESS = 3;
-
         private static Random rnd;
         public IcdPacketGenerator()
         {
@@ -73,15 +71,23 @@ namespace simulator_main.icd
                 {
                     int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
                     Console.WriteLine("_________________");
+                    Console.WriteLine("id "+row.GetRowId());
                     Console.WriteLine("location "+row.GetLocation());
                     Console.WriteLine("min "+row.GetMin());
                     Console.WriteLine("max "+row.GetMax());
                     Console.WriteLine("location "+row.GetLocation());
                     Console.WriteLine("rnd10 "+randomParamValue);
 
+                    if (errorLocations.Count>0&& row.GetRowId() == errorLocations[0].GetRowId())
+                    {
 
-                    //if (row.GetRowId() == errorLocations[0].GetRowId())
-                    //    randomParamValue = ;
+                        Console.WriteLine();
+                        Console.Write("createing error instead of "+randomParamValue+" " );
+                        randomParamValue = InduceError(row);
+                        errorLocations.RemoveAt(0);
+                        Console.Write(randomParamValue);
+                        Console.WriteLine();
+                    }
 
                     if (row.IsRowCorIdentifier())
                         corValue = randomParamValue;
@@ -100,8 +106,30 @@ namespace simulator_main.icd
             printbyte(finalSequence);
         }
         // create local erros in one location
-        private void InduceError(IcdType row)
+        private int InduceError(IcdType row)
         {
+
+            //To do : fix not working with signed ie id 1
+
+
+            int physicalUpperLimit;
+            int physicalLowerLimit;
+            int rndValue;
+            if (row.GetMin() < 0 || row.GetMax() < 0)
+            {
+                // if signed
+                physicalUpperLimit = (int)(Math.Pow(2,row.GetSize()-1));
+                physicalLowerLimit = (int)(-Math.Pow(2, row.GetSize() - 1))-1;
+            }
+            else
+            {
+                physicalLowerLimit = 0;
+                physicalUpperLimit = (int)(Math.Pow(2, row.GetSize()));
+            }
+            if (row.GetMax() == physicalUpperLimit)
+                rndValue = rnd.Next(physicalLowerLimit, row.GetMin());
+            else rndValue = rnd.Next(row.GetMax(), physicalUpperLimit);
+            return rndValue;
 
         }
         // run on valid locations and create errors throughout the byte array
@@ -162,7 +190,8 @@ namespace simulator_main.icd
             int sequenceArraySize = icdRows[icdRows.Count - 1].GetLocation() + 1 + icdRows[icdRows.Count - 1].GetSize() / 9;
             byte[] finalSequence = new byte[sequenceArraySize];
 
-
+            //InduceError(icdRows[0]);
+            //InduceError(icdRows[12]);
             GenerateByteArray(icdRows, ref finalSequence, ErrorArrayLocation(icdRows,packetNoise));            
 
             return ByteArrayToString(finalSequence);
