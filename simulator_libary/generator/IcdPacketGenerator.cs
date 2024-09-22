@@ -14,17 +14,17 @@ namespace simulator_main.icd
         {
             rnd = new Random();
         }
+
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
         private byte[] GetAccurateByte(int value,int size)
         {
             byte[] startValue = BitConverter.GetBytes(value);
-            Console.WriteLine(size / 8 + (size % 8!=0?1:0));
+            // creats an array for final size and adds one length for uncounted bits (less than 8)
             byte[] finalValue = new byte[size / 8 + (size % 8 != 0 ? 1 : 0)];
             int i = 0;
             for (int j = 0; j < finalValue.Length; i++ ,j++)
-            {
                 finalValue[j] = startValue[i];
-            }
+
             return finalValue;
         }
         // turns a byte array into a continues string
@@ -40,7 +40,6 @@ namespace simulator_main.icd
         {
             if (rowMask != string.Empty)
             {
-                Console.WriteLine("mask "+rowMask);
                 byte mask = Convert.ToByte(rowMask, 2);
                 // push currentValue to be in mask range
                 while ((mask & 0b00000001) != 1)
@@ -50,15 +49,7 @@ namespace simulator_main.icd
                     currentValue = (byte)(currentValue << 1);
                 }
             }
-        }
-        private void printbyte(byte[] array)
-        {
-            foreach (var item in array)
-            {
-                Console.Write(Convert.ToString(item, 2).PadLeft(8, '0')+" ");
-            }
-            Console.WriteLine();
-        }       
+        }      
         private void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence,List<IcdType> errorLocations)
         {
             int corValue = -1;
@@ -71,32 +62,20 @@ namespace simulator_main.icd
                 if ((row.GetCorrValue() == -1 || row.GetCorrValue() == corValue) && row.GetError()==string.Empty)
                 {
                     int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
-                    Console.WriteLine("_________________");
-                    Console.WriteLine("id "+row.GetRowId());
-                    Console.WriteLine("location "+row.GetLocation());
-                    Console.WriteLine("min "+row.GetMin());
-                    Console.WriteLine("max "+row.GetMax());
-                    Console.WriteLine("location "+row.GetLocation());
-                    Console.WriteLine("rnd10 "+randomParamValue);
-
+                    // creates error at this row id if demanded by errorLocation list
                     if (errorLocations.Count>0&& row.GetRowId() == errorLocations[0].GetRowId())
                     {
-
-                        Console.WriteLine();
-                        Console.Write("createing error instead of "+randomParamValue+" " );
                         randomParamValue = InduceError(row);
                         errorLocations.RemoveAt(0);
-                        Console.Write(randomParamValue);
-                        Console.WriteLine();
                     }
-
+                    // if this row contains corralator update cor value
                     if (row.IsRowCorIdentifier())
                         corValue = randomParamValue;
-                    
+
+                    // parses the requested data to byte array
                     byte[] currentValue = GetAccurateByte(randomParamValue,row.GetSize());
-                    Console.WriteLine("rnd2");
-                    printbyte(currentValue);
                     
+                    // create mask here if needed
                     CreateMask(row.GetMask(),ref currentValue[0]);
 
                     for (int i = 0; i < currentValue.Length; i++)
@@ -104,8 +83,8 @@ namespace simulator_main.icd
                         finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
                 }
             }
-            printbyte(finalSequence);
         }
+
         // create local erros in one location
         private int InduceError(IcdType row)
         {
@@ -151,16 +130,12 @@ namespace simulator_main.icd
                 int randomLocatoin = rnd.Next(0, validLocations.Count);
                 validLocations.RemoveAt(randomLocatoin);
             }
-            foreach(var item in validLocations)
-            {
-                Console.WriteLine("going to create error at id "+item.GetRowId());
-            }
 
             return validLocations;
         }
         public async Task<string> GeneratePacketBitData(string json, int packetDelay, int packetNoise)
         {
-
+            const int PACKET_DELAY_RANDOMNESS = 100;
             List<IcdType> icdRows;
             try
             {
@@ -178,11 +153,9 @@ namespace simulator_main.icd
 
             if (packetDelay > 0)
             {
-                Console.WriteLine("going to delay for " +packetDelay);
                 return await Task.Run(async () =>
                 {
-                    await Task.Delay(packetDelay);
-                    Console.WriteLine("finished");
+                    await Task.Delay(packetDelay + rnd.Next(-PACKET_DELAY_RANDOMNESS,PACKET_DELAY_RANDOMNESS));
                     return ByteArrayToString(finalSequence);
                 });
             }
