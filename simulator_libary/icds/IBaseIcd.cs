@@ -7,6 +7,7 @@ namespace simulator_main.icd
 {
     public interface IBaseIcd
     {
+        public int GetRowId();
         public int GetLocation();
         public string GetMask();
         public int GetSize();

@@ -19,14 +19,14 @@ namespace simulator_main.Controllers
             _BitstreamService = bitstreamService;
         }
         [HttpPost("getSimulation")]
-        public string GetBitstream([FromBody] GetSimulationDto simulationDto)
+        public async Task<string> GetBitstreamAsync([FromBody] GetSimulationDto simulationDto)
         {
-            return  _BitstreamService.GetPacketData(simulationDto);
+            return  await _BitstreamService.GetPacketDataAsync(simulationDto);
         }        
         [HttpPost("getErrorSimulation")]
-        public string GetErrorBitstream([FromBody] GetErrorSimulationDto getErrorSimulationDto)
+        public async Task<string> GetErrorBitstreamAsync([FromBody] GetErrorSimulationDto getErrorSimulationDto)
         {
-            return  _BitstreamService.GetPacketErrorData(getErrorSimulationDto);
+            return await _BitstreamService.GetPacketErrorDataAsync(getErrorSimulationDto);
         }
     }
 }

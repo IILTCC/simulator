@@ -40,6 +40,7 @@ namespace simulator_main.icd
         {
             if (rowMask != string.Empty)
             {
+                Console.WriteLine("mask "+rowMask);
                 byte mask = Convert.ToByte(rowMask, 2);
                 // push currentValue to be in mask range
                 while ((mask & 0b00000001) != 1)
@@ -95,7 +96,7 @@ namespace simulator_main.icd
                     byte[] currentValue = GetAccurateByte(randomParamValue,row.GetSize());
                     Console.WriteLine("rnd2");
                     printbyte(currentValue);
-                    Console.WriteLine("mask ");
+                    
                     CreateMask(row.GetMask(),ref currentValue[0]);
 
                     for (int i = 0; i < currentValue.Length; i++)
@@ -108,13 +109,11 @@ namespace simulator_main.icd
         // create local erros in one location
         private int InduceError(IcdType row)
         {
-
-            //To do : fix not working with signed ie id 1
-
-
+            // caluculate actual max size
             int physicalUpperLimit;
             int physicalLowerLimit;
             int rndValue;
+            
             if (row.GetMin() < 0 || row.GetMax() < 0)
             {
                 // if signed
@@ -126,29 +125,14 @@ namespace simulator_main.icd
                 physicalLowerLimit = 0;
                 physicalUpperLimit = (int)(Math.Pow(2, row.GetSize()));
             }
+            // check where we leave a gap between actual size and request size
             if (row.GetMax() == physicalUpperLimit)
                 rndValue = rnd.Next(physicalLowerLimit, row.GetMin());
             else rndValue = rnd.Next(row.GetMax(), physicalUpperLimit);
             return rndValue;
 
         }
-        // run on valid locations and create errors throughout the byte array
-        //private void CreatePacketErrors(int packetNoise,ref byte[] finalSequence,List<IcdType> validLocations)
-        //{
-        //    // find all valid locations for changing values meaing parameteres that dont full
-        //    // advantage of the bit range ie 11111111 should not be 255 to be valid
 
-        //    for(int i = 0;i<packetNoise && validLocations.Count>0;i++)
-        //    {
-        //        int randomItem = rnd.Next(0,validLocations.Count);
-        //        //byte[] tempArray = new byte[validLocations[randomItem].GetSize()/8];
-        //        //for(int j = 0;j<tempArray.Length;j++)
-        //        //{
-        //        //    tempArray[j] = finalSequence[validLocations[randomItem].GetLocation() + j];
-        //        //}
-        //        InduceError(ref finalSequence,validLocations[randomItem]);
-        //    }
-        //}
 
         // create an array to where create a packet error while beintg sorted from small to big
         private List<IcdType> ErrorArrayLocation(List<IcdType> icdRows,int packetNoise)
@@ -174,7 +158,7 @@ namespace simulator_main.icd
 
             return validLocations;
         }
-        public string GeneratePacketBitData(string json,float packetDelay,int packetNoise)
+        public async Task<string> GeneratePacketBitData(string json, int packetDelay, int packetNoise)
         {
 
             List<IcdType> icdRows;
@@ -182,7 +166,7 @@ namespace simulator_main.icd
             {
                 icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return string.Empty;
             }
@@ -190,10 +174,18 @@ namespace simulator_main.icd
             int sequenceArraySize = icdRows[icdRows.Count - 1].GetLocation() + 1 + icdRows[icdRows.Count - 1].GetSize() / 9;
             byte[] finalSequence = new byte[sequenceArraySize];
 
-            //InduceError(icdRows[0]);
-            //InduceError(icdRows[12]);
-            GenerateByteArray(icdRows, ref finalSequence, ErrorArrayLocation(icdRows,packetNoise));            
+            GenerateByteArray(icdRows, ref finalSequence, ErrorArrayLocation(icdRows, packetNoise));
 
+            if (packetDelay > 0)
+            {
+                Console.WriteLine("going to delay for " +packetDelay);
+                return await Task.Run(async () =>
+                {
+                    await Task.Delay(packetDelay);
+                    Console.WriteLine("finished");
+                    return ByteArrayToString(finalSequence);
+                });
+            }
             return ByteArrayToString(finalSequence);
 
         }            

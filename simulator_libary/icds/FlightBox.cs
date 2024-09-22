@@ -30,7 +30,10 @@ namespace simulator_main.icd
         public string GetError() {return string.Empty;}
         public bool IsRowCorIdentifier() { return false; }
         
-            
+        public int GetRowId() { return this.Id; }
+       
+
+        
         
     }
 }
