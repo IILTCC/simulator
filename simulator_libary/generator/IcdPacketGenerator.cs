@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,7 +33,6 @@ namespace simulator_main.icd
             string returnString = string.Empty;
             foreach (byte item in byteArray)
                 returnString += Convert.ToString(item, 2).PadLeft(8, '0');
-            returnString = returnString.Remove(returnString.Length - 1);
             return returnString;
         }
         private void CreateMask(string rowMask, ref byte currentValue)
