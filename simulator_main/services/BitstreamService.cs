@@ -46,9 +46,8 @@ namespace simulator_main.services
             
             string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationErroDto.IcdName + ICD_FILE_TYPE);
 
-            // get the icd generic type at run time
             Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[getSimulationErroDto.IcdName]);
-            // construct the generic icd at runtime
+
             dynamic icdInstance = Activator.CreateInstance(genericIcdType);
 
             return await icdInstance.GeneratePacketBitData(jsonText,getSimulationErroDto.PacketDelayAmount,getSimulationErroDto.PacketNoiseAmount);

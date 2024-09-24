@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,8 +19,11 @@ namespace simulator_main.icd
         private byte[] GetAccurateByte(int value,int size)
         {
             byte[] startValue = BitConverter.GetBytes(value);
+
+            int finalValueSize = size / 8 + (size % 8 != 0 ? 1 : 0);
+
             // creats an array for final size and adds one length for uncounted bits (less than 8)
-            byte[] finalValue = new byte[size / 8 + (size % 8 != 0 ? 1 : 0)];
+            byte[] finalValue = new byte[finalValueSize];
             int i = 0;
             for (int j = 0; j < finalValue.Length; i++ ,j++)
                 finalValue[j] = startValue[i];
@@ -62,7 +65,7 @@ namespace simulator_main.icd
                 {
                     int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
                     // creates error at this row id if demanded by errorLocation list
-                    if (errorLocations.Count>0&& row.GetRowId() == errorLocations[0].GetRowId())
+                    if (errorLocations.Count>0 && row.GetRowId() == errorLocations[0].GetRowId())
                     {
                         randomParamValue = InduceError(row);
                         errorLocations.RemoveAt(0);
@@ -74,7 +77,6 @@ namespace simulator_main.icd
                     // parses the requested data to byte array
                     byte[] currentValue = GetAccurateByte(randomParamValue,row.GetSize());
                     
-                    // create mask here if needed
                     CreateMask(row.GetMask(),ref currentValue[0]);
 
                     for (int i = 0; i < currentValue.Length; i++)
@@ -94,7 +96,6 @@ namespace simulator_main.icd
             
             if (row.GetMin() < 0 || row.GetMax() < 0)
             {
-                // if signed
                 physicalUpperLimit = (int)(Math.Pow(2,row.GetSize()-1));
                 physicalLowerLimit = (int)(-Math.Pow(2, row.GetSize() - 1))-1;
             }
@@ -112,10 +113,9 @@ namespace simulator_main.icd
         }
 
 
-        // create an array to where create a packet error while beintg sorted from small to big
+        // create an array to where create a packet error
         private List<IcdType> ErrorArrayLocation(List<IcdType> icdRows,int packetNoise)
         {
-            // get all valid locations of where we can create error
             List<IcdType> validLocations = new List<IcdType>();
             foreach (IcdType icdRow in icdRows)
             {
