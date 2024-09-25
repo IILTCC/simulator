@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using simulator_libary;
 namespace simulator_main
 {
     public class Startup
@@ -24,7 +24,7 @@ namespace simulator_main
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public async void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
@@ -32,6 +32,9 @@ namespace simulator_main
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "simulator_main", Version = "v1" });
             });
+            SocketConnection sokcetConnection = new SocketConnection();
+            await sokcetConnection.ConnectAsync();
+            services.AddSingleton(sokcetConnection);
             services.AddSingleton<IBitstreamService, BitstreamService>();
         }
 
