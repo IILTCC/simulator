@@ -23,14 +23,10 @@ namespace simulator_main.icd
         public int GetSize() { return this.Bit; }
         public int GetMin() { return this.Min; }
         public int GetMax() { return this.Max; }
-
         public string GetName(){return string.Empty;}
-
         public int GetCorrValue(){return -1;}
         public string GetError() {return string.Empty;}
         public bool IsRowCorIdentifier() { return false; }
-        
-            
-        
+        public int GetRowId() { return this.Id; }  
     }
 }

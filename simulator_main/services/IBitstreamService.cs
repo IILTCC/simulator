@@ -9,7 +9,8 @@ namespace simulator_main.services
 {
     public interface IBitstreamService
     {
-        public string GetPacketData(GetSimulationDto getSimulationDto);
+        public Task<string> GetPacketDataAsync(GetSimulationDto getSimulationDto);
+        public Task<string> GetPacketErrorDataAsync(GetErrorSimulationDto getSimulationErroDto);
 
     }
 }

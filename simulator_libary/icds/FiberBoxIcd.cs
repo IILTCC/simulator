@@ -25,6 +25,8 @@ namespace simulator_main.icd
         public int Length { get; set; }
         public string Enum { get; set; }
 
+        public int GetRowId() { return this.Id; }
+        
         public int GetLocation()
         {
             if (this.Location == string.Empty)

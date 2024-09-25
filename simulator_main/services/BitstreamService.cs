@@ -24,7 +24,7 @@ namespace simulator_main.services
             IcdDictionary.Add("FiberBoxDownIcd", typeof(FiberBoxIcd));
             IcdDictionary.Add("FiberBoxUpIcd", typeof(FiberBoxIcd));
         }
-        public string GetPacketData(GetSimulationDto getSimulationDto)
+        public async Task<string> GetPacketDataAsync(GetSimulationDto getSimulationDto)
         {
             if (!IcdDictionary.ContainsKey(getSimulationDto.IcdName))
                 return "400";
@@ -36,8 +36,21 @@ namespace simulator_main.services
             // construct the generic icd at runtime
             dynamic icdInstance = Activator.CreateInstance(genericIcdType);
 
-            return icdInstance.GeneratePacketBitData(jsonText);
+            return await icdInstance.GeneratePacketBitData(jsonText,0,0);
 
+        }
+        public async Task<string> GetPacketErrorDataAsync(GetErrorSimulationDto getSimulationErroDto)
+        {
+            if (!IcdDictionary.ContainsKey(getSimulationErroDto.IcdName))
+                return "400";
+            
+            string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationErroDto.IcdName + ICD_FILE_TYPE);
+
+            Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[getSimulationErroDto.IcdName]);
+
+            dynamic icdInstance = Activator.CreateInstance(genericIcdType);
+
+            return await icdInstance.GeneratePacketBitData(jsonText,getSimulationErroDto.PacketDelayAmount,getSimulationErroDto.PacketNoiseAmount);
         }
     }
 }
