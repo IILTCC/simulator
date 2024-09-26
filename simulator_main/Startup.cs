@@ -33,9 +33,10 @@ namespace simulator_main
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "simulator_main", Version = "v1" });
             });
             SocketConnection sokcetConnection = new SocketConnection();
-            await sokcetConnection.ConnectAsync();
             services.AddSingleton(sokcetConnection);
             services.AddSingleton<IBitstreamService, BitstreamService>();
+            // connection after BitStreamService because Bitstream depends on socketConnection
+            await sokcetConnection.ConnectAsync();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

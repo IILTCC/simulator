@@ -17,7 +17,6 @@ namespace simulator_libary
 
         public async Task ConnectAsync()
         {
-            Console.WriteLine("-----------");
             IPAddress ipAddr = new IPAddress(new byte[] { 127, 0, 0, 1 });
 
             telemetryDevice = new TcpClient(AddressFamily.InterNetwork);
@@ -26,14 +25,16 @@ namespace simulator_libary
         }
         public async Task SendPacket(byte[]packet,IcdTypes type)
         {
-            Console.WriteLine("sent packet with length "+packet.Length);
+            // initial packet data information 0,1 location - size and 2 - type
             byte[] packetData = new byte[3];
+
             byte[] packetSize = BitConverter.GetBytes(packet.Length);
             byte[] packetType = BitConverter.GetBytes((int)(type));
+
             packetData[0] = packetSize[0];
             packetData[1] = packetSize[1];
             packetData[2] = packetType[0];
-            Console.WriteLine("packet data data"+packetData[0]+packetData[1]+packetData[2]);
+
             await stream.WriteAsync(packetData);
             await stream.WriteAsync(packet);
         }
