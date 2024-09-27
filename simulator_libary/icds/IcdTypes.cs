@@ -8,9 +8,9 @@ namespace simulator_libary.icds
 {
     public enum IcdTypes
     {
-        FlightBoxDown,
-        FlightBoxUp,        
-        FiberBoxDown,
-        FiberBoxUp
+        FlightBoxDownIcd,
+        FlightBoxUpIcd,        
+        FiberBoxDownIcd,
+        FiberBoxUpIcd
     }
 }
