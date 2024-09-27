@@ -1,5 +1,4 @@
 ﻿using simulator_main.dtos;
-using simulator_main.icd;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +8,8 @@ namespace simulator_main.services
 {
     public interface IBitstreamService
     {
-        public Task<string> GetPacketDataAsync(GetSimulationDto getSimulationDto);
-        public Task<string> GetPacketErrorDataAsync(GetErrorSimulationDto getSimulationErroDto);
+        public Task GetPacketDataAsync(GetSimulationDto getSimulationDto);
+        public Task GetPacketErrorDataAsync(GetErrorSimulationDto getSimulationErroDto);
 
     }
 }

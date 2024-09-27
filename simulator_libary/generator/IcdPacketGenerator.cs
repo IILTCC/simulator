@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace simulator_main.icd
+namespace simulator_libary
 {
     public class IcdPacketGenerator<IcdType> where IcdType : IBaseIcd
     {
@@ -132,7 +132,7 @@ namespace simulator_main.icd
 
             return validLocations;
         }
-        public async Task<string> GeneratePacketBitData(string json, int packetDelay, int packetNoise)
+        public async Task<byte[]> GeneratePacketBitData(string json, int packetDelay, int packetNoise)
         {
             const int PACKET_DELAY_RANDOMNESS = 100;
             List<IcdType> icdRows;
@@ -142,7 +142,7 @@ namespace simulator_main.icd
             }
             catch (Exception)
             {
-                return string.Empty;
+                return null;
             }
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
             int sequenceArraySize = icdRows[icdRows.Count - 1].GetLocation() + 1 + icdRows[icdRows.Count - 1].GetSize() / 9;
@@ -155,10 +155,10 @@ namespace simulator_main.icd
                 return await Task.Run(async () =>
                 {
                     await Task.Delay(packetDelay + rnd.Next(-PACKET_DELAY_RANDOMNESS,PACKET_DELAY_RANDOMNESS));
-                    return ByteArrayToString(finalSequence);
+                    return (finalSequence);
                 });
             }
-            return ByteArrayToString(finalSequence);
+            return (finalSequence);
 
         }            
     }
