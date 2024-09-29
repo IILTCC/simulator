@@ -28,5 +28,11 @@ namespace simulator_main.Controllers
         {
             await _BitstreamService.GetPacketErrorDataAsync(getErrorSimulationDto);
         }
+        [HttpPost("stopSimulator")]
+        public void StopSimulator()
+        {
+            _BitstreamService.StopSimulator();
+        }
+
     }
 }

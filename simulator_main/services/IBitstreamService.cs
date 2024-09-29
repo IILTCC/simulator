@@ -10,6 +10,7 @@ namespace simulator_main.services
     {
         public Task GetPacketDataAsync(GetSimulationDto getSimulationDto);
         public Task GetPacketErrorDataAsync(GetErrorSimulationDto getSimulationErroDto);
+        public void StopSimulator();
 
     }
 }
