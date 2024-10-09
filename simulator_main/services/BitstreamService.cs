@@ -33,9 +33,9 @@ namespace simulator_main.services
             bitStreamCancelToken = bitStreamCancelTokenSource.Token;
             bitStreamCancelTokenSource.Cancel();
         }
-        public async Task ConnectTelemetry()
+        public void ConnectTelemetry()
         {
-            await TelemetryConnection.ConnectAsync();
+             TelemetryConnection.ConnectAsync();
         }
         public async Task GetPacketDataAsync(GetSimulationDto getSimulationDto)
         {
