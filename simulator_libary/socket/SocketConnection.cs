@@ -1,6 +1,8 @@
-﻿using simulator_libary.icds;
+﻿using Microsoft.Extensions.Configuration;
+using simulator_libary.icds;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -12,15 +14,25 @@ namespace simulator_libary
     public class SocketConnection
     {
         const int PACKET_HEADER_SIZE = 3;
-        const int PORT = 50000;
         UdpClient telemetryDevice;
-
-        public  void ConnectAsync()
+        private readonly IConfiguration _configFile;
+        public SocketConnection()
         {
-            IPAddress ipAddr = new IPAddress(new byte[] { 192,168,33,241});
+            var builder = new ConfigurationBuilder();
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            _configFile = builder.Build();
+        }
+        public void ConnectAsync()
+        {
+            byte[] ipBytes = new byte[4];
+            for (int i = 0; i < 4; i++)
+                ipBytes[i] = (byte)Int32.Parse(_configFile["SimulatorSettings:DefaultGatewayIp"].Split(".")[i]);
+            IPAddress ipAddr = new IPAddress(ipBytes);
 
             telemetryDevice = new UdpClient(AddressFamily.InterNetwork);
-            telemetryDevice.Connect(ipAddr, PORT);
+            telemetryDevice.Connect(ipAddr, Int32.Parse(_configFile["SimulatorSettings:SimulatorPort"]));
         }
         public async Task SendPacket(byte[]packet,IcdTypes type)
         {
