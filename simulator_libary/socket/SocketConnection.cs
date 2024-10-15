@@ -15,24 +15,20 @@ namespace simulator_libary
     {
         const int PACKET_HEADER_SIZE = 3;
         UdpClient telemetryDevice;
-        private readonly IConfiguration _configFile;
-        public SocketConnection()
+        private readonly SimulatorSettings _simulatorSettings;
+        public SocketConnection(SimulatorSettings simulatorSettings)
         {
-            var builder = new ConfigurationBuilder();
-            builder.SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
-            _configFile = builder.Build();
+            _simulatorSettings = simulatorSettings;
         }
         public void ConnectAsync()
         {
             byte[] ipBytes = new byte[4];
             for (int i = 0; i < 4; i++)
-                ipBytes[i] = (byte)Int32.Parse(_configFile["SimulatorSettings:DefaultGatewayIp"].Split(".")[i]);
+                ipBytes[i] = (byte)Int32.Parse(_simulatorSettings.DefaultGatewayIp.Split(".")[i]);
             IPAddress ipAddr = new IPAddress(ipBytes);
 
             telemetryDevice = new UdpClient(AddressFamily.InterNetwork);
-            telemetryDevice.Connect(ipAddr, Int32.Parse(_configFile["SimulatorSettings:SimulatorPort"]));
+            telemetryDevice.Connect(ipAddr, _simulatorSettings.SimulatorPort);
         }
         public async Task SendPacket(byte[]packet,IcdTypes type)
         {
