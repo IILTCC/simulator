@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using simulator_libary;
+using System.IO;
+
 namespace simulator_main
 {
     public class Startup
@@ -32,7 +34,14 @@ namespace simulator_main
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "simulator_main", Version = "v1" });
             });
-            SocketConnection sokcetConnection = new SocketConnection();
+            IConfigurationRoot configFile = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile(ConfigPaths.AppSettingsName, optional: false, reloadOnChange: true)
+                   .Build();
+
+            SimulatorSettings simulatorSettings = configFile.GetRequiredSection(ConfigPaths.TopLevelSettingsName).Get<SimulatorSettings>();
+
+            SocketConnection sokcetConnection = new SocketConnection(simulatorSettings);
             services.AddSingleton(sokcetConnection);
             services.AddSingleton<IBitstreamService, BitstreamService>();
             // connection after BitStreamService because Bitstream depends on socketConnection
