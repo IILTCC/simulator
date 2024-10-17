@@ -36,7 +36,7 @@ namespace simulator_main
             services.AddSingleton(sokcetConnection);
             services.AddSingleton<IBitstreamService, BitstreamService>();
             // connection after BitStreamService because Bitstream depends on socketConnection
-            await sokcetConnection.ConnectAsync();
+            sokcetConnection.ConnectAsync();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

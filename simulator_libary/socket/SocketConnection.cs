@@ -12,16 +12,14 @@ namespace simulator_libary
     public class SocketConnection
     {
         const int PORT = 50000;
-        TcpClient telemetryDevice;
-        NetworkStream stream;
+        UdpClient telemetryDevice;
 
-        public async Task ConnectAsync()
+        public  void ConnectAsync()
         {
-            IPAddress ipAddr = new IPAddress(new byte[] { 127, 0, 0, 1 });
+            IPAddress ipAddr = new IPAddress(new byte[] { 192,168,33,241});
 
-            telemetryDevice = new TcpClient(AddressFamily.InterNetwork);
-            await telemetryDevice.ConnectAsync(ipAddr,PORT);
-            stream = telemetryDevice.GetStream();
+            telemetryDevice = new UdpClient(AddressFamily.InterNetwork);
+            telemetryDevice.Connect(ipAddr, PORT);
         }
         public async Task SendPacket(byte[]packet,IcdTypes type)
         {
@@ -35,8 +33,8 @@ namespace simulator_libary
             packetData[1] = packetSize[1];
             packetData[2] = packetType[0];
 
-            await stream.WriteAsync(packetData);
-            await stream.WriteAsync(packet);
+            await telemetryDevice.SendAsync(packetData,packetData.Length);
+            await telemetryDevice.SendAsync(packet,packet.Length);
         }
 
     }
