@@ -104,10 +104,11 @@ namespace simulator_libary
                 physicalLowerLimit = 0;
                 physicalUpperLimit = (int)(Math.Pow(2, row.GetSize()));
             }
+            
             // check where we leave a gap between actual size and request size
             if (row.GetMax() == physicalUpperLimit)
                 rndValue = rnd.Next(physicalLowerLimit, row.GetMin());
-            else rndValue = rnd.Next(row.GetMax(), physicalUpperLimit);
+            else rndValue = rnd.Next(row.GetMax()+1, physicalUpperLimit);
             return rndValue;
 
         }
