@@ -13,7 +13,7 @@ namespace simulator_libary
 {
     public class SocketConnection
     {
-        const int PACKET_HEADER_SIZE = 3;
+        const int PACKET_HEADER_SIZE = 27;
         UdpClient telemetryDevice;
         private readonly SimulatorSettings _simulatorSettings;
         public SocketConnection(SimulatorSettings simulatorSettings)
@@ -37,11 +37,15 @@ namespace simulator_libary
             byte[] packetSize = BitConverter.GetBytes(packet.Length);
             byte[] packetType = BitConverter.GetBytes((int)(type));
 
+            string timestamp = DateTime.Now.ToString("dd,MM,yyyy,HH,mm,ss,ffff");
+            byte[] timestampBytes = Encoding.ASCII.GetBytes(timestamp);
+
             // initial packet data information 0,1 location - size and 2 - type
             finalPacket[0] = packetSize[0];
             finalPacket[1] = packetSize[1];
             finalPacket[2] = packetType[0];
-
+            for (int i = 0; i < timestampBytes.Length; i++)
+                finalPacket[i+3] = timestampBytes[i];
             for (int i = 0; i < packet.Length; i++)
                 finalPacket[i + PACKET_HEADER_SIZE] = packet[i];
 
