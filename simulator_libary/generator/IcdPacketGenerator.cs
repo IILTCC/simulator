@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace simulator_libary
@@ -10,34 +8,34 @@ namespace simulator_libary
     public class IcdPacketGenerator<IcdType> where IcdType : IBaseIcd
     {
         private static Random rnd;
-        public IcdPacketGenerator()
+        private readonly List<IcdType> _icdRows;
+        public IcdPacketGenerator(string json)
         {
             rnd = new Random();
+            try
+            {
+                _icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
         private byte[] GetAccurateByte(int value,int size)
         {
             byte[] startValue = BitConverter.GetBytes(value);
-
             int finalValueSize = size / 8 + (size % 8 != 0 ? 1 : 0);
-
-            // creats an array for final size and adds one length for uncounted bits (less than 8)
             byte[] finalValue = new byte[finalValueSize];
+
             int i = 0;
             for (int j = 0; j < finalValue.Length; i++ ,j++)
                 finalValue[j] = startValue[i];
 
             return finalValue;
         }
-        // turns a byte array into a continues string
-        private string ByteArrayToString(byte[] byteArray)
-        {
-            string returnString = string.Empty;
-            foreach (byte item in byteArray)
-                returnString += Convert.ToString(item, 2).PadLeft(8, '0');
-            return returnString;
-        }
+
         private void CreateMask(string rowMask, ref byte currentValue)
         {
             if (rowMask != string.Empty)
@@ -47,20 +45,18 @@ namespace simulator_libary
                 while ((mask & 0b00000001) != 1)
                 {
                     mask = (byte)(mask >> 1);
-                    // 0 - assuming if there is a mask, max size of value was less then 8 bits
                     currentValue = (byte)(currentValue << 1);
                 }
             }
         }      
-        private void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence,List<IcdType> errorLocations)
+        private void GenerateByteArray(List<IcdType> _icdRows, ref byte[] finalSequence,List<IcdType> errorLocations)
         {
             int corValue = -1;
-            foreach (IcdType row in icdRows)
+            foreach (IcdType row in _icdRows)
             {
-                //ilegal icd
                 if (row.GetCorrValue() != -1 && corValue == -1)
                     return;
-                // check if no error in line and that cor value is good
+
                 if ((row.GetCorrValue() == -1 || row.GetCorrValue() == corValue) && row.GetError()==string.Empty)
                 {
                     int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
@@ -70,7 +66,7 @@ namespace simulator_libary
                         randomParamValue = InduceError(row);
                         errorLocations.RemoveAt(0);
                     }
-                    // if this row contains corralator update cor value
+
                     if (row.IsRowCorIdentifier())
                         corValue = randomParamValue;
 
@@ -86,7 +82,6 @@ namespace simulator_libary
             }
         }
 
-        // create local erros in one location
         private int InduceError(IcdType row)
         {
             // caluculate actual max size
@@ -110,15 +105,12 @@ namespace simulator_libary
                 rndValue = rnd.Next(physicalLowerLimit, row.GetMin());
             else rndValue = rnd.Next(row.GetMax()+1, physicalUpperLimit);
             return rndValue;
-
         }
 
-
-        // create an array to where create a packet error
-        private List<IcdType> ErrorArrayLocation(List<IcdType> icdRows,int packetNoise)
+        private List<IcdType> ErrorArrayLocation(List<IcdType> _icdRows,int packetNoise)
         {
             List<IcdType> validLocations = new List<IcdType>();
-            foreach (IcdType icdRow in icdRows)
+            foreach (IcdType icdRow in _icdRows)
             {
                 if ((icdRow.GetMax() - icdRow.GetMin() + 1) != Math.Pow(2, icdRow.GetSize()))
                     validLocations.Add(icdRow);
@@ -133,23 +125,16 @@ namespace simulator_libary
 
             return validLocations;
         }
-        public async Task<byte[]> GeneratePacketBitData(string json, int packetDelay, int packetNoise)
+        // packet noise - amount of parameters errors, packet delay - delay in miliseconds
+        public async Task<byte[]> GeneratePacketBitData( int packetDelay, int packetNoise)
         {
             const int PACKET_DELAY_RANDOMNESS = 100;
-            List<IcdType> icdRows;
-            try
-            {
-                icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
-            int sequenceArraySize = icdRows[icdRows.Count - 1].GetLocation() + 1 + icdRows[icdRows.Count - 1].GetSize() / 9;
+            int sequenceArraySize = _icdRows[_icdRows.Count - 1].GetLocation() + 1 + _icdRows[_icdRows.Count - 1].GetSize() / 9;
             byte[] finalSequence = new byte[sequenceArraySize];
 
-            GenerateByteArray(icdRows, ref finalSequence, ErrorArrayLocation(icdRows, packetNoise));
+            GenerateByteArray(_icdRows, ref finalSequence, ErrorArrayLocation(_icdRows, packetNoise));
 
             if (packetDelay > 0)
             {
@@ -160,7 +145,6 @@ namespace simulator_libary
                 });
             }
             return (finalSequence);
-
         }            
     }
 }

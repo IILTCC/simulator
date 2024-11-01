@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace simulator_libary
 {
     public class FiberBoxIcd : IBaseIcd
     {
-        public int Id { get; set; }
+        public int Id { get; set; } 
         public string Error { get; set; }
         public string Location { get; set; }
         public string CorrValue { get; set; }
