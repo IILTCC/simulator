@@ -1,5 +1,6 @@
 ﻿using simulator_libary.icds;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -33,18 +34,17 @@ namespace simulator_libary
         public async Task SendPacket(byte[]packet,IcdTypes type)
         {
             byte[] finalPacket = new byte[PACKET_HEADER_SIZE + packet.Length];
-            byte[] packetType = BitConverter.GetBytes((int)(type));
+            byte[] packetType = new byte[1] { (byte)((int)(type)) };
             string timestamp = DateTime.Now.ToString(TIMESTAMP_FORMAT);
             byte[] timestampBytes = Encoding.ASCII.GetBytes(timestamp);
 
-            int headerOffset = 0;
-            // initial packet data information 0,1 - size and 2 - type
-            finalPacket[headerOffset++] = packetType[0];
-            for (int timeIndex = 0; timeIndex < timestampBytes.Length; timeIndex++)
-                finalPacket[timeIndex + headerOffset] = timestampBytes[timeIndex];
-
-            for (int packetIndex = 0; packetIndex < packet.Length; packetIndex++)
-                finalPacket[packetIndex + PACKET_HEADER_SIZE] = packet[packetIndex];
+            List<byte[]> packetParameters = new List<byte[]>() { packetType,timestampBytes,packet};
+            int packetOffset = 0;
+            foreach(byte[] parameter in packetParameters)
+            {
+                for (int paramIndex = 0; paramIndex < parameter.Length; paramIndex++)
+                    finalPacket[packetOffset++] = parameter[paramIndex];
+            }
 
             await networkCard.SendAsync(finalPacket, finalPacket.Length);
         }
