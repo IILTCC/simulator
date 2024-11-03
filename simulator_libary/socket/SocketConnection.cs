@@ -22,8 +22,8 @@ namespace simulator_libary
         public void Connect()
         {
             byte[] ipBytes = new byte[4];
-            for (int i = 0; i < 4; i++)
-                ipBytes[i] = (byte)int.Parse(_simulatorSettings.DefaultGatewayIp.Split(".")[i]);
+            for (int ipIndex = 0; ipIndex < 4; ipIndex++)
+                ipBytes[ipIndex] = (byte)int.Parse(_simulatorSettings.DefaultGatewayIp.Split(".")[ipIndex]);
             IPAddress ipAddr = new IPAddress(ipBytes);
 
             networkCard = new UdpClient(AddressFamily.InterNetwork);

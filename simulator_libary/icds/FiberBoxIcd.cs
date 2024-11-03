@@ -36,7 +36,6 @@ namespace simulator_libary
             // call multiple times this function
 
             string retValue = this.Mask;
-            // remove '' before and after the mask
             if (retValue != string.Empty)
                 retValue = retValue.Substring(1, this.Mask.Length - 2);
             return retValue;
@@ -54,11 +53,9 @@ namespace simulator_libary
             // call multiple times this function
             string retValue = this.CorrValue;
 
-            // remove ' before and after the corr value
             if (retValue != string.Empty)
                 retValue = this.CorrValue.Substring(1, this.CorrValue.Length - 2);
 
-            // remove leading zeros
             retValue = retValue.TrimStart(new char[] { '0' });
             if (retValue == string.Empty)
                 return 0;
