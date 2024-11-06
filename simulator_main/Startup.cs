@@ -19,7 +19,7 @@ namespace simulator_main
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+    
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -38,7 +38,7 @@ namespace simulator_main
             SocketConnection sokcetConnection = new SocketConnection(simulatorSettings);
             services.AddSingleton(sokcetConnection);
             services.AddSingleton<IBitstreamService, BitstreamService>();
-            // connection after BitStreamService because Bitstream depends on socketConnection
+            
             sokcetConnection.Connect();
         }
 

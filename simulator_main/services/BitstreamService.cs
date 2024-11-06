@@ -41,6 +41,7 @@ namespace simulator_main.services
         }
         public void GetPacketData(GetSimulationDto getSimulationDto)
         {
+            const int ZERO_ERROR_DELAY = 0;
             // parses the string to the enum equivlent if no enum exists with this name return
             if (!Enum.TryParse(getSimulationDto.IcdName, out IcdTypes icdType))
                 return;
@@ -48,7 +49,7 @@ namespace simulator_main.services
             string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationDto.IcdName + ICD_FILE_TYPE);
             Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[icdType]);
             dynamic icdInstance = Activator.CreateInstance(genericIcdType,jsonText);
-            BitStreamControl(0, 0, icdInstance, icdType);
+            BitStreamControl(ZERO_ERROR_DELAY, ZERO_ERROR_DELAY, icdInstance, icdType);
         }
         public  void GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto)
         {
@@ -57,7 +58,7 @@ namespace simulator_main.services
 
             string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationErroDto.IcdName + ICD_FILE_TYPE);
             Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[icdType]);
-            dynamic icdInstance = (IcdPacketGenerator<IBaseIcd>)Activator.CreateInstance(genericIcdType, jsonText);
+            dynamic icdInstance = Activator.CreateInstance(genericIcdType, jsonText);
             BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, icdInstance, icdType);
         }
         public void StopSimulator()

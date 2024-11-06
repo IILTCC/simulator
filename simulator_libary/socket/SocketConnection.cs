@@ -22,8 +22,9 @@ namespace simulator_libary
 
         public void Connect()
         {
-            byte[] ipBytes = new byte[4];
-            for (int ipIndex = 0; ipIndex < 4; ipIndex++)
+            const int IP_SIZE = 4;
+            byte[] ipBytes = new byte[IP_SIZE];
+            for (int ipIndex = 0; ipIndex < IP_SIZE; ipIndex++)
                 ipBytes[ipIndex] = (byte)int.Parse(_simulatorSettings.DefaultGatewayIp.Split(".")[ipIndex]);
             IPAddress ipAddr = new IPAddress(ipBytes);
 
@@ -33,8 +34,9 @@ namespace simulator_libary
 
         public async Task SendPacket(byte[]packet,IcdTypes type)
         {
+            const int TYPE_SIZE = 1;
             byte[] finalPacket = new byte[PACKET_HEADER_SIZE + packet.Length];
-            byte[] packetType = new byte[1] { (byte)((int)(type)) };
+            byte[] packetType = new byte[TYPE_SIZE] { (byte)((int)(type)) };
             string timestamp = DateTime.Now.ToString(TIMESTAMP_FORMAT);
             byte[] timestampBytes = Encoding.ASCII.GetBytes(timestamp);
 

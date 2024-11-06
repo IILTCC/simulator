@@ -25,8 +25,9 @@ namespace simulator_libary
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
         private byte[] GetAccurateByte(int value,int size)
         {
+            const int BYTE_SIZE = 8;
             byte[] startValue = BitConverter.GetBytes(value);
-            int finalValueSize = size / 8 + (size % 8 != 0 ? 1 : 0);
+            int finalValueSize = size / BYTE_SIZE + (size % BYTE_SIZE != 0 ? 1 : 0);
             byte[] finalValue = new byte[finalValueSize];
 
             int i = 0;
@@ -49,10 +50,10 @@ namespace simulator_libary
                 }
             }
         }      
-        private void GenerateByteArray(List<IcdType> _icdRows, ref byte[] finalSequence,List<IcdType> errorLocations)
+        private void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence,List<IcdType> errorLocations)
         {
             int corValue = -1;
-            foreach (IcdType row in _icdRows)
+            foreach (IcdType row in icdRows)
             {
                 if (row.GetCorrValue() != -1 && corValue == -1)
                     return;
@@ -107,10 +108,10 @@ namespace simulator_libary
             return rndValue;
         }
 
-        private List<IcdType> ErrorArrayLocation(List<IcdType> _icdRows,int packetNoise)
+        private List<IcdType> ErrorArrayLocation(List<IcdType> icdRows,int packetNoise)
         {
             List<IcdType> validLocations = new List<IcdType>();
-            foreach (IcdType icdRow in _icdRows)
+            foreach (IcdType icdRow in icdRows)
             {
                 if ((icdRow.GetMax() - icdRow.GetMin() + 1) != Math.Pow(2, icdRow.GetSize()))
                     validLocations.Add(icdRow);
@@ -129,9 +130,9 @@ namespace simulator_libary
         public async Task<byte[]> GeneratePacketBitData( int packetDelay, int packetNoise)
         {
             const int PACKET_DELAY_RANDOMNESS = 100;
-
+            const int LAST_ROW_DIVIDER = 9;
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
-            int sequenceArraySize = _icdRows[_icdRows.Count - 1].GetLocation() + 1 + _icdRows[_icdRows.Count - 1].GetSize() / 9;
+            int sequenceArraySize = _icdRows[_icdRows.Count - 1].GetLocation() + 1 + _icdRows[_icdRows.Count - 1].GetSize() / LAST_ROW_DIVIDER;
             byte[] finalSequence = new byte[sequenceArraySize];
 
             GenerateByteArray(_icdRows, ref finalSequence, ErrorArrayLocation(_icdRows, packetNoise));
