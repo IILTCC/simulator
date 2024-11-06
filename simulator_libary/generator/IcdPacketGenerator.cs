@@ -129,7 +129,7 @@ namespace simulator_libary
         // packet noise - amount of parameters errors, packet delay - delay in miliseconds
         public async Task<byte[]> GeneratePacketBitData( int packetDelay, int packetNoise)
         {
-            const int PACKET_DELAY_RANDOMNESS = 100;
+            const float PACKET_DELAY_RANDOMNESS = 0.2f;
             const int LAST_ROW_DIVIDER = 9;
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
             int sequenceArraySize = _icdRows[_icdRows.Count - 1].GetLocation() + 1 + _icdRows[_icdRows.Count - 1].GetSize() / LAST_ROW_DIVIDER;
@@ -141,7 +141,8 @@ namespace simulator_libary
             {
                 return await Task.Run(async () =>
                 {
-                    await Task.Delay(packetDelay + rnd.Next(-PACKET_DELAY_RANDOMNESS,PACKET_DELAY_RANDOMNESS));
+                    int rndDelay = rnd.Next(-(int)PACKET_DELAY_RANDOMNESS*packetDelay, (int)PACKET_DELAY_RANDOMNESS*packetDelay);
+                    await Task.Delay(packetDelay + rndDelay);
                     return (finalSequence);
                 });
             }
