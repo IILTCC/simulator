@@ -11,8 +11,7 @@ namespace simulator_main.services
 {
     public class BitstreamService : IBitstreamService
     {
-        private const string ICD_REPO_PATH = "./icd_repo/";
-        private const string ICD_FILE_TYPE = ".json";
+
 
         private CancellationTokenSource bitStreamCancelTokenSource ;
         private CancellationToken bitStreamCancelToken;
@@ -46,7 +45,7 @@ namespace simulator_main.services
             if (!Enum.TryParse(getSimulationDto.IcdName, out IcdTypes icdType))
                 return;
 
-            string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationDto.IcdName + ICD_FILE_TYPE);
+            string jsonText = File.ReadAllText(Consts.ICD_REPO_PATH + getSimulationDto.IcdName + Consts.ICD_FILE_TYPE);
             Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[icdType]);
             dynamic icdInstance = Activator.CreateInstance(genericIcdType,jsonText);
             BitStreamControl(ZERO_ERROR_DELAY, ZERO_ERROR_DELAY, icdInstance, icdType);
@@ -56,7 +55,7 @@ namespace simulator_main.services
             if (!Enum.TryParse(getSimulationErroDto.IcdName, out IcdTypes icdType))
                 return;
 
-            string jsonText = File.ReadAllText(ICD_REPO_PATH + getSimulationErroDto.IcdName + ICD_FILE_TYPE);
+            string jsonText = File.ReadAllText(Consts.ICD_REPO_PATH + getSimulationErroDto.IcdName + Consts.ICD_FILE_TYPE);
             Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[icdType]);
             dynamic icdInstance = Activator.CreateInstance(genericIcdType, jsonText);
             BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, icdInstance, icdType);

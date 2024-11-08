@@ -1,4 +1,5 @@
 ﻿using simulator_libary.icds;
+using simulator_libary.socket;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -10,9 +11,6 @@ namespace simulator_libary
 {
     public class SocketConnection
     {
-        private const int PACKET_HEADER_SIZE = 25;
-        private const string TIMESTAMP_FORMAT = "dd,MM,yyyy,HH,mm,ss,ffff";
-
         private UdpClient networkCard;
                 private readonly SimulatorSettings _simulatorSettings;
         public SocketConnection(SimulatorSettings simulatorSettings)
@@ -35,9 +33,9 @@ namespace simulator_libary
         public async Task SendPacket(byte[]packet,IcdTypes type)
         {
             const int TYPE_SIZE = 1;
-            byte[] finalPacket = new byte[PACKET_HEADER_SIZE + packet.Length];
+            byte[] finalPacket = new byte[Consts.PACKET_HEADER_SIZE + packet.Length];
             byte[] packetType = new byte[TYPE_SIZE] { (byte)((int)(type)) };
-            string timestamp = DateTime.Now.ToString(TIMESTAMP_FORMAT);
+            string timestamp = DateTime.Now.ToString(Consts.TIMESTAMP_FORMAT);
             byte[] timestampBytes = Encoding.ASCII.GetBytes(timestamp);
 
             List<byte[]> packetParameters = new List<byte[]>() { packetType,timestampBytes,packet};
