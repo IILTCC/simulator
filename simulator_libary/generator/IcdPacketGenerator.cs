@@ -25,9 +25,8 @@ namespace simulator_libary
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
         private byte[] GetAccurateByte(int value,int size)
         {
-            const int BYTE_SIZE = 8;
             byte[] startValue = BitConverter.GetBytes(value);
-            int finalValueSize = size / BYTE_SIZE + (size % BYTE_SIZE != 0 ? 1 : 0);
+            int finalValueSize = size / Consts.BYTE_SIZE + (size % Consts.BYTE_SIZE != 0 ? 1 : 0);
             byte[] finalValue = new byte[finalValueSize];
 
             int i = 0;
@@ -129,10 +128,8 @@ namespace simulator_libary
         // packet noise - amount of parameters errors, packet delay - delay in miliseconds
         public async Task<byte[]> GeneratePacketBitData( int packetDelay, int packetNoise)
         {
-            const float PACKET_DELAY_RANDOMNESS = 0.2f;
-            const int LAST_ROW_DIVIDER = 9;
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
-            int sequenceArraySize = _icdRows[_icdRows.Count - 1].GetLocation() + 1 + _icdRows[_icdRows.Count - 1].GetSize() / LAST_ROW_DIVIDER;
+            int sequenceArraySize = _icdRows[_icdRows.Count - 1].GetLocation() + 1 + _icdRows[_icdRows.Count - 1].GetSize() / Consts.LAST_ROW_DIVIDER;
             byte[] finalSequence = new byte[sequenceArraySize];
 
             GenerateByteArray(_icdRows, ref finalSequence, ErrorArrayLocation(_icdRows, packetNoise));
@@ -141,7 +138,7 @@ namespace simulator_libary
             {
                 return await Task.Run(async () =>
                 {
-                    int rndDelay = rnd.Next(-(int)PACKET_DELAY_RANDOMNESS*packetDelay, (int)PACKET_DELAY_RANDOMNESS*packetDelay);
+                    int rndDelay = rnd.Next(-(int)Consts.PACKET_DELAY_RANDOMNESS*packetDelay, (int)Consts.PACKET_DELAY_RANDOMNESS * packetDelay);
                     await Task.Delay(packetDelay + rndDelay);
                     return (finalSequence);
                 });
