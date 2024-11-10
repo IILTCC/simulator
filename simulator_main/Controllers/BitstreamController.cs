@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using simulator_main.dtos;
 using simulator_main.services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace simulator_main.Controllers
 {
@@ -18,16 +13,19 @@ namespace simulator_main.Controllers
         {
             _BitstreamService = bitstreamService;
         }
-        [HttpPost("getSimulation")]
-        public async Task GetBitstreamAsync([FromBody] GetSimulationDto simulationDto)
+
+        [HttpPost("startSimulation")]
+        public void GetBitstreamAsync([FromBody] GetSimulationDto simulationDto)
         {
-             await _BitstreamService.GetPacketDataAsync(simulationDto);
+              _BitstreamService.GetPacketData(simulationDto);
         }        
-        [HttpPost("getErrorSimulation")]
-        public async Task GetErrorBitstreamAsync([FromBody] GetErrorSimulationDto getErrorSimulationDto)
+
+        [HttpPost("startErrorSimulation")]
+        public void GetErrorBitstreamAsync([FromBody] GetErrorSimulationDto getErrorSimulationDto)
         {
-            await _BitstreamService.GetPacketErrorDataAsync(getErrorSimulationDto);
+             _BitstreamService.GetPacketErrorData(getErrorSimulationDto);
         }
+
         [HttpPost("stopSimulator")]
         public void StopSimulator()
         {

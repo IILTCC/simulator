@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace simulator_libary
+﻿namespace simulator_libary
 {
     public interface IBaseIcd
     {

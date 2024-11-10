@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace simulator_libary
 {
     public class FiberBoxIcd : IBaseIcd
     {
-        public int Id { get; set; }
+        public int Id { get; set; } 
         public string Error { get; set; }
         public string Location { get; set; }
         public string CorrValue { get; set; }
@@ -39,7 +36,6 @@ namespace simulator_libary
             // call multiple times this function
 
             string retValue = this.Mask;
-            // remove '' before and after the mask
             if (retValue != string.Empty)
                 retValue = retValue.Substring(1, this.Mask.Length - 2);
             return retValue;
@@ -57,11 +53,9 @@ namespace simulator_libary
             // call multiple times this function
             string retValue = this.CorrValue;
 
-            // remove ' before and after the corr value
             if (retValue != string.Empty)
                 retValue = this.CorrValue.Substring(1, this.CorrValue.Length - 2);
 
-            // remove leading zeros
             retValue = retValue.TrimStart(new char[] { '0' });
             if (retValue == string.Empty)
                 return 0;
