@@ -1,42 +1,32 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace simulator_libary
+namespace simulator_libary.generator
 {
-    public class IcdPacketGenerator<IcdType> where IcdType : IBaseIcd
+    public abstract class BasePacketGenerator<IcdType>:IBasePacketGenerator<IcdType> where IcdType : IBaseIcd
     {
-        private static Random rnd;
-        private readonly List<IcdType> _icdRows;
-        public IcdPacketGenerator(string json)
-        {
-            rnd = new Random();
-            try
-            {
-                _icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
-            }
-            catch (Exception)
-            {
-                return;
-            }
-        }
+        protected static Random rnd;
+        protected List<IcdType> _icdRows;
 
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
-        private byte[] GetAccurateByte(int value,int size)
+        public byte[] GetAccurateByte(int value, int size)
         {
             byte[] startValue = BitConverter.GetBytes(value);
             int finalValueSize = size / Consts.BYTE_SIZE + (size % Consts.BYTE_SIZE != 0 ? 1 : 0);
             byte[] finalValue = new byte[finalValueSize];
 
             int i = 0;
-            for (int j = 0; j < finalValue.Length; i++ ,j++)
+            for (int j = 0; j < finalValue.Length; i++, j++)
                 finalValue[j] = startValue[i];
 
             return finalValue;
         }
 
-        private void CreateMask(string rowMask, ref byte currentValue)
+        public void CreateMask(string rowMask, ref byte currentValue)
         {
             if (rowMask != string.Empty)
             {
@@ -48,66 +38,35 @@ namespace simulator_libary
                     currentValue = (byte)(currentValue << 1);
                 }
             }
-        }      
-        private void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence,List<IcdType> errorLocations)
-        {
-            int corValue = -1;
-            foreach (IcdType row in icdRows)
-            {
-                if (row.GetCorrValue() != -1 && corValue == -1)
-                    return;
-
-                if ((row.GetCorrValue() == -1 || row.GetCorrValue() == corValue) && row.GetError()==string.Empty)
-                {
-                    int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
-                    // creates error at this row id if demanded by errorLocation list
-                    if (errorLocations.Count>0 && row.GetRowId() == errorLocations[0].GetRowId())
-                    {
-                        randomParamValue = InduceError(row);
-                        errorLocations.RemoveAt(0);
-                    }
-
-                    if (row.IsRowCorIdentifier())
-                        corValue = randomParamValue;
-
-                    // parses the requested data to byte array
-                    byte[] currentValue = GetAccurateByte(randomParamValue,row.GetSize());
-                    
-                    CreateMask(row.GetMask(),ref currentValue[0]);
-
-                    for (int i = 0; i < currentValue.Length; i++)
-                        // append current value of all sizes to final sequence
-                        finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
-                }
-            }
         }
+        public abstract void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence, List<IcdType> errorLocations);
 
-        private int InduceError(IcdType row)
+        public int InduceError(IcdType row)
         {
             // caluculate actual max size
             int physicalUpperLimit;
             int physicalLowerLimit;
             int rndValue;
-            
+
             if (row.GetMin() < 0 || row.GetMax() < 0)
             {
-                physicalUpperLimit = (int)(Math.Pow(2,row.GetSize()-1));
-                physicalLowerLimit = (int)(-Math.Pow(2, row.GetSize() - 1))-1;
+                physicalUpperLimit = (int)(Math.Pow(2, row.GetSize() - 1));
+                physicalLowerLimit = (int)(-Math.Pow(2, row.GetSize() - 1)) - 1;
             }
             else
             {
                 physicalLowerLimit = 0;
                 physicalUpperLimit = (int)(Math.Pow(2, row.GetSize()));
             }
-            
+
             // check where we leave a gap between actual size and request size
             if (row.GetMax() == physicalUpperLimit)
                 rndValue = rnd.Next(physicalLowerLimit, row.GetMin());
-            else rndValue = rnd.Next(row.GetMax()+1, physicalUpperLimit);
+            else rndValue = rnd.Next(row.GetMax() + 1, physicalUpperLimit);
             return rndValue;
         }
 
-        private List<IcdType> ErrorArrayLocation(List<IcdType> icdRows,int packetNoise)
+        public List<IcdType> ErrorArrayLocation(List<IcdType> icdRows, int packetNoise)
         {
             List<IcdType> validLocations = new List<IcdType>();
             foreach (IcdType icdRow in icdRows)
@@ -117,7 +76,7 @@ namespace simulator_libary
             }
 
             // reduce the array to the desired amount
-            while(validLocations.Count > packetNoise)
+            while (validLocations.Count > packetNoise)
             {
                 int randomLocatoin = rnd.Next(0, validLocations.Count);
                 validLocations.RemoveAt(randomLocatoin);
@@ -126,7 +85,7 @@ namespace simulator_libary
             return validLocations;
         }
         // packet noise - amount of parameters errors, packet delay - delay in miliseconds
-        public async Task<byte[]> GeneratePacketBitData( int packetDelay, int packetNoise)
+        public async Task<byte[]> GeneratePacketBitData(int packetDelay, int packetNoise)
         {
             // create byte array as amount of bytes needed, divide by 9 is there for end case of icd ending with size greater than 8
             int sequenceArraySize = _icdRows[_icdRows.Count - 1].GetLocation() + 1 + _icdRows[_icdRows.Count - 1].GetSize() / Consts.LAST_ROW_DIVIDER;
@@ -138,12 +97,12 @@ namespace simulator_libary
             {
                 return await Task.Run(async () =>
                 {
-                    int rndDelay = rnd.Next(-(int)Consts.PACKET_DELAY_RANDOMNESS*packetDelay, (int)Consts.PACKET_DELAY_RANDOMNESS * packetDelay);
+                    int rndDelay = rnd.Next(-(int)Consts.PACKET_DELAY_RANDOMNESS * packetDelay, (int)Consts.PACKET_DELAY_RANDOMNESS * packetDelay);
                     await Task.Delay(packetDelay + rndDelay);
                     return (finalSequence);
                 });
             }
             return (finalSequence);
-        }            
+        }
     }
 }
