@@ -30,16 +30,16 @@ namespace simulator_main
             });
             IConfigurationRoot configFile = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile(ConfigPaths.AppSettingsName, optional: false, reloadOnChange: true)
+                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                    .Build();
 
-            SimulatorSettings simulatorSettings = configFile.GetRequiredSection(ConfigPaths.TopLevelSettingsName).Get<SimulatorSettings>();
+            SimulatorSettings simulatorSettings = configFile.GetRequiredSection(nameof(SimulatorSettings)).Get<SimulatorSettings>();
 
-            SocketConnection sokcetConnection = new SocketConnection(simulatorSettings);
-            services.AddSingleton(sokcetConnection);
+            SocketConnection socketConnection = new SocketConnection(simulatorSettings);
+            services.AddSingleton(socketConnection);
             services.AddSingleton<IBitstreamService, BitstreamService>();
             
-            sokcetConnection.Connect();
+            socketConnection.Connect();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
