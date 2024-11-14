@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace simulator_libary
 {
-    public class CorrelatorPacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IBaseIcd
+    public class CorrelatorPacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IParameterIcd
     {
         public CorrelatorPacketGenerator(string json)
         {

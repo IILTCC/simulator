@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace simulator_libary.generator
 {
-    public class SimplePacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IBaseIcd
+    public class SimplePacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IParameterIcd
     {
         public SimplePacketGenerator(string json)
         {

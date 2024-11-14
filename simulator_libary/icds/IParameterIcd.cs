@@ -1,6 +1,6 @@
 ﻿namespace simulator_libary
 {
-    public interface IBaseIcd
+    public interface IParameterIcd
     {
         public int GetRowId();
         public int GetLocation();

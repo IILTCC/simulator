@@ -1,10 +1,10 @@
-﻿using System;
+﻿using simulator_libary.icds;
+using System;
 
 namespace simulator_libary
 {
-    public class FiberBoxIcd : IBaseIcd
+    public class FiberBoxIcd : BaseBoxIcd
     {
-        public int Id { get; set; } 
         public string Error { get; set; }
         public string Location { get; set; }
         public string CorrValue { get; set; }
@@ -17,20 +17,16 @@ namespace simulator_libary
         public int PhysicalLimitDef { get; set; }
         public string InterfaceType { get; set; }
         public int Size { get; set; }
-        public int Min { get; set; }
-        public int Max { get; set; }
         public int Length { get; set; }
         public string Enum { get; set; }
 
-        public int GetRowId() { return this.Id; }
-        
-        public int GetLocation()
+        public override int GetLocation()
         {
             if (this.Location == string.Empty)
                 return -1;
             return Int32.Parse(this.Location); 
         }
-        public string GetMask() 
+        public override string GetMask() 
         {
             // the use of temp is to no change the original value so you can
             // call multiple times this function
@@ -40,11 +36,9 @@ namespace simulator_libary
                 retValue = retValue.Substring(1, this.Mask.Length - 2);
             return retValue;
         }
-        public int GetSize() { return this.Size; }
-        public int GetMin() { return this.Min; }
-        public int GetMax() { return this.Max; }
-        public string GetName() { return this.Identifier; }
-        public int GetCorrValue() 
+        public override int GetSize() { return this.Size; }
+        public override string GetName() { return this.Identifier; }
+        public override int GetCorrValue() 
         {
             if (this.CorrValue == string.Empty)
                 return -1;
@@ -62,11 +56,11 @@ namespace simulator_libary
 
             return Int32.Parse(retValue); 
         }
-        public string GetError()
+        public override string GetError()
         {
             return this.Error;
         }
-        public bool IsRowCorIdentifier()
+        public override bool IsRowCorIdentifier()
         {
             return this.Identifier == "correlator";
         }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace simulator_libary.generator
 {
-    public interface IBasePacketGenerator<IcdType> where IcdType : IBaseIcd
+    public interface IBasePacketGenerator<IcdType> where IcdType : IParameterIcd
     {
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
         public byte[] GetAccurateByte(int value, int size);
