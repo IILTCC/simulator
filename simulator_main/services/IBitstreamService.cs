@@ -1,4 +1,5 @@
-﻿using simulator_main.dtos;
+﻿using simulator_libary.icds;
+using simulator_main.dtos;
 
 namespace simulator_main.services
 {
@@ -6,7 +7,7 @@ namespace simulator_main.services
     {
         public void GetPacketData(GetSimulationDto getSimulationDto);
         public void GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto);
-        public void StopSimulator();
+        public void StopSimulator(StopSimulatorDto icdType);
 
     }
 }

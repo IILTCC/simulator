@@ -1,14 +1,16 @@
-﻿namespace simulator_main.dtos
+﻿using simulator_libary.icds;
+
+namespace simulator_main.dtos
 {
     public class GetErrorSimulationDto
     {
-        public string IcdName { get; set; }
+        public IcdTypes IcdType { get; set; }
         public int PacketDelayAmount { get; set; }
         public int PacketNoiseAmount { get; set; }
 
-        public GetErrorSimulationDto(string icdName,int packetDelayAmount,int packetNoiseAmount)
+        public GetErrorSimulationDto(IcdTypes icdType,int packetDelayAmount,int packetNoiseAmount)
         {
-            this.IcdName = icdName;
+            this.IcdType = icdType;
             this.PacketDelayAmount = packetDelayAmount;
             this.PacketNoiseAmount = packetNoiseAmount;
         }

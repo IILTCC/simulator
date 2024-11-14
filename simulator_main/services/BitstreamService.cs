@@ -1,4 +1,5 @@
 ﻿using simulator_libary;
+using simulator_libary.generator;
 using simulator_libary.icds;
 using simulator_main.dtos;
 using System;
@@ -11,82 +12,82 @@ namespace simulator_main.services
 {
     public class BitstreamService : IBitstreamService
     {
-
-
-        private CancellationTokenSource bitStreamCancelTokenSource;
-        private CancellationToken bitStreamCancelToken;
-        private readonly Dictionary<IcdTypes, Type> IcdDictionary;
-        private readonly SocketConnection TelemetryConnection;
+        private readonly Dictionary<IcdTypes, Channel> _icdDictionary;
+        private readonly SocketConnection _telemetryConnection;
         public BitstreamService(SocketConnection telemetryConnection)
         {
-            TelemetryConnection = telemetryConnection;
-            IcdDictionary = new Dictionary<IcdTypes, Type>();
+            _telemetryConnection = telemetryConnection;
+            _icdDictionary = new Dictionary<IcdTypes, Channel>();
             InitializeIcdDict();
-
-            bitStreamCancelTokenSource = new CancellationTokenSource();
-            bitStreamCancelToken = bitStreamCancelTokenSource.Token;
-            bitStreamCancelTokenSource.Cancel();
         }
         public void InitializeIcdDict()
         {
-            IcdDictionary.Add(IcdTypes.FlightBoxDownIcd, typeof(FlightBoxIcd));
-            IcdDictionary.Add(IcdTypes.FlightBoxUpIcd, typeof(FlightBoxIcd));
-            IcdDictionary.Add(IcdTypes.FiberBoxDownIcd, typeof(FiberBoxIcd));
-            IcdDictionary.Add(IcdTypes.FiberBoxUpIcd, typeof(FiberBoxIcd));
+            string FlightBoxUpJson = File.ReadAllText(Consts.ICD_REPO_PATH + IcdTypes.FlightBoxUpIcd.ToString() + Consts.ICD_FILE_TYPE);
+            string FlightBoxDownJson = File.ReadAllText(Consts.ICD_REPO_PATH + IcdTypes.FlightBoxDownIcd.ToString() + Consts.ICD_FILE_TYPE);
+            string FiberBoxUpJson = File.ReadAllText(Consts.ICD_REPO_PATH + IcdTypes.FiberBoxUpIcd.ToString() + Consts.ICD_FILE_TYPE);            
+            string FiberBoxDownJson = File.ReadAllText(Consts.ICD_REPO_PATH + IcdTypes.FiberBoxDownIcd.ToString() + Consts.ICD_FILE_TYPE);
+
+            IGeneratePacketBit FiberBoxUpGenerator = new CorrelatorPacketGenerator<FiberBoxIcd>(FiberBoxUpJson);
+            IGeneratePacketBit FiberBoxDownGenerator = new CorrelatorPacketGenerator<FiberBoxIcd>(FiberBoxDownJson);
+            IGeneratePacketBit FlightBoxUpGenerator = new SimplePacketGenerator<FlightBoxIcd>(FlightBoxUpJson);
+            IGeneratePacketBit FlightBoxDownGenerator = new SimplePacketGenerator<FlightBoxIcd>(FlightBoxDownJson);
+
+            _icdDictionary.Add(IcdTypes.FiberBoxDownIcd,new Channel(FiberBoxDownGenerator));
+            _icdDictionary.Add(IcdTypes.FiberBoxUpIcd,new Channel(FiberBoxUpGenerator));
+            _icdDictionary.Add(IcdTypes.FlightBoxDownIcd,new Channel(FlightBoxDownGenerator));
+            _icdDictionary.Add(IcdTypes.FlightBoxUpIcd,new Channel(FlightBoxUpGenerator));
+
+            foreach(Channel channel in _icdDictionary.Values)
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+                channel.ChannelTokenSource = cts;
+                channel.ChannelToken = cts.Token;
+                cts.Cancel();
+            }
         }
         public void ConnectTelemetry()
         {
-            TelemetryConnection.Connect();
+            _telemetryConnection.Connect();
         }
         public void GetPacketData(GetSimulationDto getSimulationDto)
         {
-            // parses the string to the enum equivlent if no enum exists with this name return
-            if (!Enum.TryParse(getSimulationDto.IcdName, out IcdTypes icdType))
-                return;
+            Console.WriteLine(getSimulationDto.IcdType);
 
-            string jsonText = File.ReadAllText(Consts.ICD_REPO_PATH + getSimulationDto.IcdName + Consts.ICD_FILE_TYPE);
-            Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[icdType]);
-            dynamic icdInstance = Activator.CreateInstance(genericIcdType, jsonText);
-            BitStreamControl(Consts.ZERO_ERROR_DELAY, Consts.ZERO_ERROR_DELAY, icdInstance, icdType);
+            Console.WriteLine(_icdDictionary[getSimulationDto.IcdType].PacketGenerator.GetType());
+            BitStreamControl(Consts.ZERO_ERROR_DELAY, Consts.ZERO_ERROR_DELAY, _icdDictionary[getSimulationDto.IcdType], getSimulationDto.IcdType);
         }
 
         public void GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto)
         {
-            if (!Enum.TryParse(getSimulationErroDto.IcdName, out IcdTypes icdType))
-                return;
-
-            string jsonText = File.ReadAllText(Consts.ICD_REPO_PATH + getSimulationErroDto.IcdName + Consts.ICD_FILE_TYPE);
-            Type genericIcdType = typeof(IcdPacketGenerator<>).MakeGenericType(IcdDictionary[icdType]);
-            dynamic icdInstance = Activator.CreateInstance(genericIcdType, jsonText);
-            BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, icdInstance, icdType);
+            BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, _icdDictionary[getSimulationErroDto.IcdType],getSimulationErroDto.IcdType);
         }
 
-        public void StopSimulator()
+        public void StopSimulator(StopSimulatorDto stopSimulatorDto)
         {
-            if (bitStreamCancelToken.IsCancellationRequested)
+            if (_icdDictionary[stopSimulatorDto.IcdType].ChannelToken.IsCancellationRequested)
                 return;
-            bitStreamCancelTokenSource.Cancel();
+            _icdDictionary[stopSimulatorDto.IcdType].ChannelTokenSource.Cancel();
         }
 
-        private void BitStreamControl(int packetDelay, int packetNoise, dynamic icdInstance, IcdTypes icdType)
+        private void BitStreamControl(int packetDelay, int packetNoise,Channel channel, IcdTypes icdType)
         {
-            if (bitStreamCancelTokenSource.IsCancellationRequested)
+            if (channel.ChannelToken.IsCancellationRequested)
             {
-                bitStreamCancelTokenSource = new CancellationTokenSource();
-                bitStreamCancelToken = bitStreamCancelTokenSource.Token;
+                channel.ChannelTokenSource = new CancellationTokenSource();
+                channel.ChannelToken = channel.ChannelTokenSource.Token;
             }
             else return;
-            Task.Run(async () => { await SendBitStream(packetDelay, packetNoise, icdInstance, icdType, bitStreamCancelToken); }, bitStreamCancelToken);
+            Task.Run(async () => { await SendBitStream(packetDelay, packetNoise, channel, icdType); }, channel.ChannelToken);
         }
 
-        private async Task SendBitStream(int packetDelay, int packetNoise, dynamic icdInstance, IcdTypes icdType, CancellationToken token)
+        private async Task SendBitStream(int packetDelay, int packetNoise, Channel channel, IcdTypes icdType)
         {
-            while (!token.IsCancellationRequested)
+            while (!channel.ChannelToken.IsCancellationRequested)
             {
                 try
                 {
-                    byte[] packetValue = await icdInstance.GeneratePacketBitData(packetDelay, packetNoise);
-                    await TelemetryConnection.SendPacket(packetValue, icdType);
+                    byte[] packetValue = await channel.PacketGenerator.GeneratePacketBitData(packetDelay, packetNoise);
+                    await _telemetryConnection.SendPacket(packetValue, icdType);
                 }
                 catch (Exception)
                 {

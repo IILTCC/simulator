@@ -27,9 +27,9 @@ namespace simulator_main.Controllers
         }
 
         [HttpPost("stopSimulator")]
-        public void StopSimulator()
+        public void StopSimulator([FromBody] StopSimulatorDto stopSimulatorDto)
         {
-            _BitstreamService.StopSimulator();
+            _BitstreamService.StopSimulator(stopSimulatorDto);
         }
 
     }

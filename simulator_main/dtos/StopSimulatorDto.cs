@@ -2,13 +2,12 @@
 
 namespace simulator_main.dtos
 {
-    public class GetSimulationDto
+    public class StopSimulatorDto
     {
         public IcdTypes IcdType { get; set; }
-
-        public GetSimulationDto(IcdTypes icdType)
+        public StopSimulatorDto(IcdTypes icdType)
         {
-            this.IcdType = icdType;
+            IcdType = icdType;
         }
     }
 }
