@@ -1,4 +1,5 @@
 ﻿using simulator_libary;
+using simulator_libary.Enums;
 using simulator_libary.generator;
 using simulator_libary.icds;
 using simulator_main.dtos;
@@ -49,35 +50,35 @@ namespace simulator_main.services
         {
             _telemetryConnection.Connect();
         }
-        public void GetPacketData(GetSimulationDto getSimulationDto)
+        public ReturnAnswers GetPacketData(GetSimulationDto getSimulationDto)
         {
-            Console.WriteLine(getSimulationDto.IcdType);
-
-            Console.WriteLine(_icdDictionary[getSimulationDto.IcdType].PacketGenerator.GetType());
-            BitStreamControl(Consts.ZERO_ERROR_DELAY, Consts.ZERO_ERROR_DELAY, _icdDictionary[getSimulationDto.IcdType], getSimulationDto.IcdType);
+            return BitStreamControl(Consts.ZERO_ERROR_DELAY, Consts.ZERO_ERROR_DELAY, _icdDictionary[getSimulationDto.IcdType], getSimulationDto.IcdType);
         }
 
-        public void GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto)
+        public ReturnAnswers GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto)
         {
-            BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, _icdDictionary[getSimulationErroDto.IcdType],getSimulationErroDto.IcdType);
+            return BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, _icdDictionary[getSimulationErroDto.IcdType],getSimulationErroDto.IcdType);
         }
 
-        public void StopSimulator(StopSimulatorDto stopSimulatorDto)
+        public ReturnAnswers StopSimulator(StopSimulatorDto stopSimulatorDto)
         {
             if (_icdDictionary[stopSimulatorDto.IcdType].ChannelToken.IsCancellationRequested)
-                return;
+                return ReturnAnswers.AreadyStopped;
             _icdDictionary[stopSimulatorDto.IcdType].ChannelTokenSource.Cancel();
+            return ReturnAnswers.Succes;
         }
 
-        private void BitStreamControl(int packetDelay, int packetNoise,Channel channel, IcdTypes icdType)
+        private ReturnAnswers BitStreamControl(int packetDelay, int packetNoise,Channel channel, IcdTypes icdType)
         {
             if (channel.ChannelToken.IsCancellationRequested)
             {
                 channel.ChannelTokenSource = new CancellationTokenSource();
                 channel.ChannelToken = channel.ChannelTokenSource.Token;
             }
-            else return;
+            else return ReturnAnswers.AlreadyRunning;
+
             Task.Run(async () => { await SendBitStream(packetDelay, packetNoise, channel, icdType); }, channel.ChannelToken);
+            return ReturnAnswers.Succes;
         }
 
         private async Task SendBitStream(int packetDelay, int packetNoise, Channel channel, IcdTypes icdType)

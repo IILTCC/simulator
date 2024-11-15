@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using simulator_libary.Enums;
 using simulator_main.dtos;
 using simulator_main.services;
 
@@ -15,21 +16,21 @@ namespace simulator_main.Controllers
         }
 
         [HttpPost("startSimulation")]
-        public void GetBitstreamAsync([FromBody] GetSimulationDto simulationDto)
+        public ReturnAnswers GetBitstreamAsync([FromBody] GetSimulationDto simulationDto)
         {
-              _BitstreamService.GetPacketData(simulationDto);
+              return _BitstreamService.GetPacketData(simulationDto);
         }        
 
         [HttpPost("startErrorSimulation")]
-        public void GetErrorBitstreamAsync([FromBody] GetErrorSimulationDto getErrorSimulationDto)
+        public ReturnAnswers GetErrorBitstreamAsync([FromBody] GetErrorSimulationDto getErrorSimulationDto)
         {
-             _BitstreamService.GetPacketErrorData(getErrorSimulationDto);
+             return _BitstreamService.GetPacketErrorData(getErrorSimulationDto);
         }
 
         [HttpPost("stopSimulator")]
-        public void StopSimulator([FromBody] StopSimulatorDto stopSimulatorDto)
+        public ReturnAnswers StopSimulator([FromBody] StopSimulatorDto stopSimulatorDto)
         {
-            _BitstreamService.StopSimulator(stopSimulatorDto);
+            return _BitstreamService.StopSimulator(stopSimulatorDto);
         }
 
     }
