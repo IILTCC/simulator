@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace simulator_libary.generator
 {
-    public abstract class BasePacketGenerator<IcdType> : IBasePacketGenerator<IcdType>, IGeneratePacketBit where IcdType:IParameterIcd
+    public abstract class BasePacketGenerator<IcdType> : IGeneratePacketBit where IcdType:IParameterIcd
     {
         protected static Random rnd;
         protected List<IcdType> _icdRows;
