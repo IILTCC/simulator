@@ -19,10 +19,8 @@ namespace simulator_main
 
         public IConfiguration Configuration { get; }
 
-    
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -33,16 +31,9 @@ namespace simulator_main
                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                    .Build();
 
-            SimulatorSettings simulatorSettings = configFile.GetRequiredSection(nameof(SimulatorSettings)).Get<SimulatorSettings>();
-
-            SocketConnection socketConnection = new SocketConnection(simulatorSettings);
-            services.AddSingleton(socketConnection);
-            services.AddSingleton<IBitstreamService, BitstreamService>();
-            
-            socketConnection.Connect();
+            services.AddSingleTones(configFile);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
