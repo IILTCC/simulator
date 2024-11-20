@@ -6,20 +6,9 @@ using System.Threading.Tasks;
 
 namespace simulator_libary
 {
-    public class CorrelatorPacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IParameterIcd
+    public class FiberBoxPacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IParameterIcd
     {
-        public CorrelatorPacketGenerator(string json)
-        {
-            rnd = new Random();
-            try
-            {
-                _icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
-            }
-            catch (Exception e)
-            {
-                return;
-            }
-        }
+        public FiberBoxPacketGenerator(string json):base(json){}
         public override void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence, List<IcdType> errorLocations)
         {
             int corValue = -1;

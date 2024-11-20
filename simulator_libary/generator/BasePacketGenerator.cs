@@ -12,6 +12,19 @@ namespace simulator_libary.generator
         protected static Random rnd;
         protected List<IcdType> _icdRows;
 
+        public BasePacketGenerator(string json)
+        {
+            rnd = new Random();
+            try
+            {
+                _icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
+            }
+            catch (Exception e)
+            {
+                return;
+            }
+        }
+
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
         public byte[] GetAccurateByte(int value, int size)
         {

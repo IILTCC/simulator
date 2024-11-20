@@ -28,10 +28,10 @@ namespace simulator_main.services
             string FiberBoxUpJson = File.ReadAllText(Consts.ICD_REPO_PATH + IcdTypes.FiberBoxUpIcd.ToString() + Consts.ICD_FILE_TYPE);            
             string FiberBoxDownJson = File.ReadAllText(Consts.ICD_REPO_PATH + IcdTypes.FiberBoxDownIcd.ToString() + Consts.ICD_FILE_TYPE);
 
-            IGeneratePacketBit FiberBoxUpGenerator = new CorrelatorPacketGenerator<FiberBoxIcd>(FiberBoxUpJson);
-            IGeneratePacketBit FiberBoxDownGenerator = new CorrelatorPacketGenerator<FiberBoxIcd>(FiberBoxDownJson);
-            IGeneratePacketBit FlightBoxUpGenerator = new SimplePacketGenerator<FlightBoxIcd>(FlightBoxUpJson);
-            IGeneratePacketBit FlightBoxDownGenerator = new SimplePacketGenerator<FlightBoxIcd>(FlightBoxDownJson);
+            IGeneratePacketBit FiberBoxUpGenerator = new FiberBoxPacketGenerator<FiberBoxIcd>(FiberBoxUpJson);
+            IGeneratePacketBit FiberBoxDownGenerator = new FiberBoxPacketGenerator<FiberBoxIcd>(FiberBoxDownJson);
+            IGeneratePacketBit FlightBoxUpGenerator = new FlightBoxPacketGenerator<FlightBoxIcd>(FlightBoxUpJson);
+            IGeneratePacketBit FlightBoxDownGenerator = new FlightBoxPacketGenerator<FlightBoxIcd>(FlightBoxDownJson);
 
             _icdDictionary.Add(IcdTypes.FiberBoxDownIcd,new Channel(FiberBoxDownGenerator));
             _icdDictionary.Add(IcdTypes.FiberBoxUpIcd,new Channel(FiberBoxUpGenerator));

@@ -4,20 +4,9 @@ using System.Collections.Generic;
 
 namespace simulator_libary.generator
 {
-    public class SimplePacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IParameterIcd
+    public class FlightBoxPacketGenerator<IcdType> : BasePacketGenerator<IcdType> where IcdType : IParameterIcd
     {
-        public SimplePacketGenerator(string json)
-        {
-            rnd = new Random();
-            try
-            {
-                _icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
-            }
-            catch (Exception e)
-            {
-                return;
-            }
-        }
+        public FlightBoxPacketGenerator(string json) : base (json){}
         public override  void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence, List<IcdType> errorLocations)
         {
             foreach (IcdType row in icdRows)
