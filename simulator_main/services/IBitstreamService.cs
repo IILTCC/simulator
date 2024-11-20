@@ -5,8 +5,8 @@ namespace simulator_main.services
 {
     public interface IBitstreamService
     {
-        public ReturnAnswers GetPacketData(GetSimulationDto getSimulationDto);
-        public ReturnAnswers GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto);
-        public ReturnAnswers StopSimulator(StopSimulatorDto icdType);
+        public ReturnStatus GetPacketData(GetSimulationDto getSimulationDto);
+        public ReturnStatus GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto);
+        public ReturnStatus StopSimulator(StopSimulatorDto icdType);
     }
 }

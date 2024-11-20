@@ -1,6 +1,6 @@
 ﻿namespace simulator_libary.Enums
 {
-    public enum ReturnAnswers
+    public enum ReturnStatus
     {
         Succes,
         AlreadyRunning,

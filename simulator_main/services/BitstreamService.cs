@@ -50,35 +50,35 @@ namespace simulator_main.services
         {
             _telemetryConnection.Connect();
         }
-        public ReturnAnswers GetPacketData(GetSimulationDto getSimulationDto)
+        public ReturnStatus GetPacketData(GetSimulationDto getSimulationDto)
         {
             return BitStreamControl(Consts.ZERO_ERROR_DELAY, Consts.ZERO_ERROR_DELAY, _icdDictionary[getSimulationDto.IcdType], getSimulationDto.IcdType);
         }
 
-        public ReturnAnswers GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto)
+        public ReturnStatus GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto)
         {
             return BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, _icdDictionary[getSimulationErroDto.IcdType],getSimulationErroDto.IcdType);
         }
 
-        public ReturnAnswers StopSimulator(StopSimulatorDto stopSimulatorDto)
+        public ReturnStatus StopSimulator(StopSimulatorDto stopSimulatorDto)
         {
             if (_icdDictionary[stopSimulatorDto.IcdType].ChannelToken.IsCancellationRequested)
-                return ReturnAnswers.AreadyStopped;
+                return ReturnStatus.AreadyStopped;
             _icdDictionary[stopSimulatorDto.IcdType].ChannelTokenSource.Cancel();
-            return ReturnAnswers.Succes;
+            return ReturnStatus.Succes;
         }
 
-        private ReturnAnswers BitStreamControl(int packetDelay, int packetNoise,Channel channel, IcdTypes icdType)
+        private ReturnStatus BitStreamControl(int packetDelay, int packetNoise,Channel channel, IcdTypes icdType)
         {
             if (channel.ChannelToken.IsCancellationRequested)
             {
                 channel.ChannelTokenSource = new CancellationTokenSource();
                 channel.ChannelToken = channel.ChannelTokenSource.Token;
             }
-            else return ReturnAnswers.AlreadyRunning;
+            else return ReturnStatus.AlreadyRunning;
 
             Task.Run(async () => { await SendBitStream(packetDelay, packetNoise, channel, icdType); }, channel.ChannelToken);
-            return ReturnAnswers.Succes;
+            return ReturnStatus.Succes;
         }
 
         private async Task SendBitStream(int packetDelay, int packetNoise, Channel channel, IcdTypes icdType)

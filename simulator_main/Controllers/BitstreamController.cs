@@ -16,19 +16,19 @@ namespace simulator_main.Controllers
         }
 
         [HttpPost("startSimulation")]
-        public ReturnAnswers StartBitstream([FromBody] GetSimulationDto simulationDto)
+        public ReturnStatus StartBitstream([FromBody] GetSimulationDto simulationDto)
         {
               return _BitstreamService.GetPacketData(simulationDto);
         }        
 
         [HttpPost("startErrorSimulation")]
-        public ReturnAnswers StartErrorBitstream([FromBody] GetErrorSimulationDto getErrorSimulationDto)
+        public ReturnStatus StartErrorBitstream([FromBody] GetErrorSimulationDto getErrorSimulationDto)
         {
              return _BitstreamService.GetPacketErrorData(getErrorSimulationDto);
         }
 
         [HttpPost("stopSimulator")]
-        public ReturnAnswers StopSimulator([FromBody] StopSimulatorDto stopSimulatorDto)
+        public ReturnStatus StopSimulator([FromBody] StopSimulatorDto stopSimulatorDto)
         {
             return _BitstreamService.StopSimulator(stopSimulatorDto);
         }
