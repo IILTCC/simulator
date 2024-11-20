@@ -1,10 +1,5 @@
-﻿using simulator_libary;
-using simulator_libary.generator;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using simulator_libary.generator;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace simulator_main.services
 {

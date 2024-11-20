@@ -8,6 +8,5 @@ namespace simulator_main.services
         public ReturnAnswers GetPacketData(GetSimulationDto getSimulationDto);
         public ReturnAnswers GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto);
         public ReturnAnswers StopSimulator(StopSimulatorDto icdType);
-
     }
 }

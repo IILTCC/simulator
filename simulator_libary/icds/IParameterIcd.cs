@@ -12,6 +12,5 @@
         public int GetCorrValue();
         public string GetError();
         public bool IsRowCorIdentifier();
-        
     }
 }

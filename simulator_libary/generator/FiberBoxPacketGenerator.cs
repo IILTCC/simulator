@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
-using simulator_libary.generator;
-using System;
+﻿using simulator_libary.generator;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace simulator_libary
 {
@@ -20,7 +17,7 @@ namespace simulator_libary
                 if ((row.GetCorrValue() == -1 || row.GetCorrValue() == corValue) && row.GetError() == string.Empty)
                 {
                     int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
-                    // creates error at this row id if demanded by errorLocation list
+
                     if (errorLocations.Count > 0 && row.GetRowId() == errorLocations[0].GetRowId())
                     {
                         randomParamValue = InduceError(row);
@@ -30,7 +27,6 @@ namespace simulator_libary
                     if (row.IsRowCorIdentifier())
                         corValue = randomParamValue;
 
-                    // parses the requested data to byte array
                     byte[] currentValue = GetAccurateByte(randomParamValue, row.GetSize());
 
                     CreateMask(row.GetMask(), ref currentValue[0]);

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace simulator_libary.generator
 {
@@ -14,14 +12,13 @@ namespace simulator_libary.generator
                 if (row.GetError() == string.Empty)
                 {
                     int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
-                    // creates error at this row id if demanded by errorLocation list
+
                     if (errorLocations.Count > 0 && row.GetRowId() == errorLocations[0].GetRowId())
                     {
                         randomParamValue = InduceError(row);
                         errorLocations.RemoveAt(0);
                     }
 
-                    // parses the requested data to byte array
                     byte[] currentValue = GetAccurateByte(randomParamValue, row.GetSize());
 
                     CreateMask(row.GetMask(), ref currentValue[0]);

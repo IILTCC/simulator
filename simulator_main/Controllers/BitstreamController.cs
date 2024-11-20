@@ -16,13 +16,13 @@ namespace simulator_main.Controllers
         }
 
         [HttpPost("startSimulation")]
-        public ReturnAnswers GetBitstreamAsync([FromBody] GetSimulationDto simulationDto)
+        public ReturnAnswers StartBitstream([FromBody] GetSimulationDto simulationDto)
         {
               return _BitstreamService.GetPacketData(simulationDto);
         }        
 
         [HttpPost("startErrorSimulation")]
-        public ReturnAnswers GetErrorBitstreamAsync([FromBody] GetErrorSimulationDto getErrorSimulationDto)
+        public ReturnAnswers StartErrorBitstream([FromBody] GetErrorSimulationDto getErrorSimulationDto)
         {
              return _BitstreamService.GetPacketErrorData(getErrorSimulationDto);
         }
