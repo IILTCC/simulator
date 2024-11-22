@@ -4,7 +4,7 @@
     {
         public const int PACKET_HEADER_SIZE = 25;
         public const string TIMESTAMP_FORMAT = "dd,MM,yyyy,HH,mm,ss,ffff";
-        public const string ICD_REPO_PATH = "./icd_repo/";
+        public const string ICD_REPO_PATH = "./IcdRepo/";
         public const string ICD_FILE_TYPE = ".json";
         public const int TYPE_SIZE = 1;
         public const int IP_SIZE = 4;

@@ -52,6 +52,28 @@ namespace simulator_libary.generator
         }
         public abstract void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence, List<IcdType> errorLocations);
 
+        public int GetFinalParamValue(IcdType row, ref List<IcdType> errorLocations)
+        {
+            int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
+
+            if (errorLocations.Count > 0 && row.GetRowId() == errorLocations[0].GetRowId())
+            {
+                randomParamValue = InduceError(row);
+                errorLocations.RemoveAt(0);
+            }
+            return randomParamValue;
+        }
+
+        public void AppendValue(int randomParamValue, IcdType row, ref byte[] finalSequence)
+        {
+            byte[] currentValue = GetAccurateByte(randomParamValue, row.GetSize());
+
+            CreateMask(row.GetMask(), ref currentValue[0]);
+
+            for (int i = 0; i < currentValue.Length; i++)
+                // append current value of all sizes to final sequence
+                finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
+        }
         public int InduceError(IcdType row)
         {
             // caluculate actual max size
