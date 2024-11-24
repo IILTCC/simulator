@@ -11,7 +11,7 @@ namespace simulator_libary.generator
             {
                 if (row.GetError() == string.Empty)
                 {
-                    int randomParamValue = GetFinalParamValue(row, ref errorLocations);
+                    int randomParamValue = GetParamValue(row, ref errorLocations);
 
                     AppendValue(randomParamValue, row, ref finalSequence);
                 }

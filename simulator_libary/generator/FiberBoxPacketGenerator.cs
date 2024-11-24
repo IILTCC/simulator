@@ -17,7 +17,7 @@ namespace simulator_libary
 
                 if ((row.GetCorrValue() == -1 || row.GetCorrValue() == corValue) && row.GetError() == string.Empty)
                 {
-                    int randomParamValue = GetFinalParamValue(row,ref errorLocations);
+                    int randomParamValue = GetParamValue(row,ref errorLocations);
 
                     if (row.IsRowCorIdentifier())
                         corValue = randomParamValue;

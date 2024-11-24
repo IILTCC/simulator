@@ -52,7 +52,7 @@ namespace simulator_libary.generator
         }
         public abstract void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence, List<IcdType> errorLocations);
 
-        public int GetFinalParamValue(IcdType row, ref List<IcdType> errorLocations)
+        public int GetParamValue(IcdType row, ref List<IcdType> errorLocations)
         {
             int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
 
