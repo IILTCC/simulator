@@ -1,12 +1,12 @@
-﻿using simulator_main.dtos;
+﻿using simulator_libary.Enums;
+using simulator_main.dtos;
 
 namespace simulator_main.services
 {
     public interface IBitstreamService
     {
-        public void GetPacketData(GetSimulationDto getSimulationDto);
-        public void GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto);
-        public void StopSimulator();
-
+        public ReturnStatus GetPacketData(GetSimulationDto getSimulationDto);
+        public ReturnStatus GetPacketErrorData(GetErrorSimulationDto getSimulationErroDto);
+        public ReturnStatus StopSimulator(StopSimulatorDto icdType);
     }
 }

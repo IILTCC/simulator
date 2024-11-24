@@ -1,6 +1,6 @@
 ﻿namespace simulator_libary
 {
-    public interface IBaseIcd
+    public interface IParameterIcd
     {
         public int GetRowId();
         public int GetLocation();
@@ -12,6 +12,5 @@
         public int GetCorrValue();
         public string GetError();
         public bool IsRowCorIdentifier();
-        
     }
 }

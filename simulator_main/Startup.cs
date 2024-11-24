@@ -4,8 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using simulator_libary;
-using simulator_main.services;
 using System.IO;
 
 namespace simulator_main
@@ -19,10 +17,8 @@ namespace simulator_main
 
         public IConfiguration Configuration { get; }
 
-    
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -30,19 +26,12 @@ namespace simulator_main
             });
             IConfigurationRoot configFile = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile(ConfigPaths.AppSettingsName, optional: false, reloadOnChange: true)
+                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                    .Build();
 
-            SimulatorSettings simulatorSettings = configFile.GetRequiredSection(ConfigPaths.TopLevelSettingsName).Get<SimulatorSettings>();
-
-            SocketConnection sokcetConnection = new SocketConnection(simulatorSettings);
-            services.AddSingleton(sokcetConnection);
-            services.AddSingleton<IBitstreamService, BitstreamService>();
-            
-            sokcetConnection.Connect();
+            services.AddSingleTones(configFile);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

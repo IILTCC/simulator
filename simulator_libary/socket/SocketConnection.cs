@@ -10,11 +10,12 @@ namespace simulator_libary
 {
     public class SocketConnection
     {
-        private UdpClient networkCard;
-                private readonly SimulatorSettings _simulatorSettings;
+        private Dictionary<IcdTypes, UdpClient> _networkCards;
+        private readonly SimulatorSettings _simulatorSettings;
         public SocketConnection(SimulatorSettings simulatorSettings)
         {
             _simulatorSettings = simulatorSettings;
+            _networkCards = new Dictionary<IcdTypes, UdpClient>();
         }
 
         public void Connect()
@@ -24,11 +25,15 @@ namespace simulator_libary
                 ipBytes[ipIndex] = (byte)int.Parse(_simulatorSettings.DefaultGatewayIp.Split(".")[ipIndex]);
             IPAddress ipAddr = new IPAddress(ipBytes);
 
-            networkCard = new UdpClient(AddressFamily.InterNetwork);
-            networkCard.Connect(ipAddr, _simulatorSettings.SimulatorPort);
+            foreach(IcdTypes icdType in Enum.GetValues(typeof(IcdTypes)))
+            {
+                UdpClient networkCard = new UdpClient(AddressFamily.InterNetwork);
+                networkCard.Connect(ipAddr, _simulatorSettings.SimulatorPort + (int)icdType);
+                _networkCards.Add(icdType,networkCard);
+            }
         }
 
-        public async Task SendPacket(byte[]packet,IcdTypes type)
+        public async Task SendPacket(byte[] packet, IcdTypes type)
         {
             byte[] finalPacket = new byte[Consts.PACKET_HEADER_SIZE + packet.Length];
             byte[] packetType = new byte[Consts.TYPE_SIZE] { (byte)((int)(type)) };
@@ -43,7 +48,7 @@ namespace simulator_libary
                     finalPacket[packetOffset++] = parameter[paramIndex];
             }
 
-            await networkCard.SendAsync(finalPacket, finalPacket.Length);
+            await _networkCards[type].SendAsync(finalPacket,finalPacket.Length);
         }
     }
 }
