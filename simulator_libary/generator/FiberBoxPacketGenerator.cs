@@ -30,6 +30,9 @@ namespace simulator_libary
                     AppendValue(randomParamValue, row, ref finalSequence);
                 }
             }
+            if (_packetCounter > _curWindowOscillation)
+                RestardPacketCounter();
+            else _packetCounter++;
         }
     }
 }

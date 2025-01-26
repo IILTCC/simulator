@@ -15,5 +15,7 @@
         public const int SIMULATOR_RAND_WINDOW = 15;
         public const int SIMULATOR_OSCILATION_WINDOW_MAX = 400;
         public const int SIMULATOR_OSCILATION_WINDOW_MIN = 100;
+        public const float SIMULATOR_JUMP_UP = 0.6f;
+        public const float SIMULATOR_JUMP_DOWN = 0.4f;
     }
 }
