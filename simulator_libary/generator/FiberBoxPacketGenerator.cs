@@ -19,12 +19,20 @@ namespace simulator_libary
                 {
                     int randomParamValue = GetParamValue(row,ref errorLocations);
 
+                    if (_prevValue.ContainsKey(row.GetRowId()))
+                        _prevValue[row.GetRowId()] = randomParamValue;
+                    else
+                        _prevValue.Add(row.GetRowId(), randomParamValue);                        
+
                     if (row.IsRowCorIdentifier())
                         corValue = randomParamValue;
 
                     AppendValue(randomParamValue, row, ref finalSequence);
                 }
             }
+            if (_packetCounter > _curWindowOscillation)
+                RestardPacketCounter();
+            else _packetCounter++;
         }
     }
 }

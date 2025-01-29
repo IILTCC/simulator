@@ -9,10 +9,14 @@ namespace simulator_libary.generator
     {
         protected static Random rnd;
         protected List<IcdType> _icdRows;
-
+        protected Dictionary<int,int> _prevValue;
+        protected int _packetCounter;
+        protected int _curWindowOscillation;
         public BasePacketGenerator(string json)
         {
             rnd = new Random();
+            _prevValue = new Dictionary<int, int>();
+            _packetCounter = 0;
             try
             {
                 _icdRows = JsonConvert.DeserializeObject<List<IcdType>>(json);
@@ -21,6 +25,12 @@ namespace simulator_libary.generator
             {
                 return;
             }
+        }
+
+        public void RestardPacketCounter()
+        {
+            _curWindowOscillation =  rnd.Next(Consts.SIMULATOR_OSCILATION_WINDOW_MIN, Consts.SIMULATOR_OSCILATION_WINDOW_MAX);
+            _packetCounter = 0;
         }
 
         // gets a value and returns a byte array in the exact length needed (in 8 bits per item)
@@ -55,7 +65,34 @@ namespace simulator_libary.generator
         public int GetParamValue(IcdType row, ref List<IcdType> errorLocations)
         {
             int randomParamValue = rnd.Next(row.GetMin(), row.GetMax() + 1);
+            if(_prevValue.ContainsKey(row.GetRowId()))
+            {
+                bool isUp = false;
+                if (_packetCounter<_curWindowOscillation/2)
+                    isUp = rnd.NextDouble() >= Consts.SIMULATOR_JUMP_UP;
+                
+                else if(_packetCounter>_curWindowOscillation/2 && _packetCounter<_curWindowOscillation)
+                    isUp = rnd.NextDouble() >= Consts.SIMULATOR_JUMP_DOWN;
 
+                float currWindow = (float)(rnd.Next(0,Consts.SIMULATOR_RAND_WINDOW))/100;
+                currWindow = (row.GetMax() - row.GetMin()) * currWindow;
+                if ((row.GetMax() - row.GetMin()) * currWindow < 1)
+                    currWindow = 1;
+
+                if (isUp) // true == up
+                {
+                    randomParamValue = (int)(_prevValue[row.GetRowId()] + currWindow);
+                    if (randomParamValue > row.GetMax())
+                        randomParamValue = row.GetMax();
+                }
+                else
+                {
+                    randomParamValue = (int)(_prevValue[row.GetRowId()] - currWindow);
+                    if (randomParamValue < row.GetMin())
+                        randomParamValue = row.GetMin();
+                }
+
+            }
             if (errorLocations.Count > 0 && row.GetRowId() == errorLocations[0].GetRowId())
             {
                 randomParamValue = InduceError(row);

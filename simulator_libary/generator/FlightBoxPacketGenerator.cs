@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace simulator_libary.generator
 {
@@ -12,10 +13,18 @@ namespace simulator_libary.generator
                 if (row.GetError() == string.Empty)
                 {
                     int randomParamValue = GetParamValue(row, ref errorLocations);
+                    if (_prevValue.ContainsKey(row.GetRowId()))
+                        _prevValue[row.GetRowId()] = randomParamValue;
+                    else
+                        _prevValue.Add(row.GetRowId(), randomParamValue);
 
                     AppendValue(randomParamValue, row, ref finalSequence);
+
                 }
             }
+            if (_packetCounter > _curWindowOscillation)
+                RestardPacketCounter();
+            else _packetCounter++;
         }
     }
 }
