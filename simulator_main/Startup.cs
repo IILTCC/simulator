@@ -28,7 +28,18 @@ namespace simulator_main
             .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                    .Build();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                               .AllowAnyHeader()
+                               .AllowCredentials()
 
+                               .AllowAnyMethod();
+                    });
+            });
             services.AddSingleTones(configFile);
         }
 
@@ -42,7 +53,7 @@ namespace simulator_main
             }
 
             app.UseRouting();
-
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
