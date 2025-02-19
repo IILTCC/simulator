@@ -142,6 +142,7 @@ namespace simulator_libary.generator
             foreach (IcdType icdRow in icdRows)
             {
                 if ((icdRow.GetMax() - icdRow.GetMin() + 1) != Math.Pow(2, icdRow.GetSize()))
+                    if(icdRow.GetCorrValue() == -1 && icdRow.GetError()==string.Empty)
                     validLocations.Add(icdRow);
             }
 
