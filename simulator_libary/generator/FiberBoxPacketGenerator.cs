@@ -9,6 +9,7 @@ namespace simulator_libary
 
         public override void GenerateByteArray(List<IcdType> icdRows, ref byte[] finalSequence, List<IcdType> errorLocations)
         {
+            int checkSumValues = 0;
             int corValue = -1;
             foreach (IcdType row in icdRows)
             {
@@ -27,12 +28,20 @@ namespace simulator_libary
                     if (row.IsRowCorIdentifier())
                         corValue = randomParamValue;
 
+                    if (row.GetRowId() > _icdRows.Count - Consts.CHECKSUM_SIZE - 1 && row.GetRowId() <= _icdRows.Count - 1)       
+                        checkSumValues += randomParamValue;
+                    
+
                     AppendValue(randomParamValue, row, ref finalSequence);
                 }
             }
+
+            BurnValue(checkSumValues, _icdRows[_icdRows.Count - 1],ref finalSequence);
+           
             if (_packetCounter > _curWindowOscillation)
                 RestardPacketCounter();
             else _packetCounter++;
+
         }
     }
 }
