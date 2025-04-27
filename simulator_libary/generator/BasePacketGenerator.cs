@@ -111,6 +111,18 @@ namespace simulator_libary.generator
                 // append current value of all sizes to final sequence
                 finalSequence[row.GetLocation() + i] = (byte)(finalSequence[row.GetLocation() + i] | currentValue[i]);
         }
+        public void BurnValue(int paramValue, IcdType row,ref byte[] finalSequence)
+        {
+            if (paramValue > row.GetMax())
+                paramValue = row.GetMax();
+            byte[] currentValue = GetAccurateByte(paramValue, row.GetSize());
+
+            CreateMask(row.GetMask(), ref currentValue[0]);
+
+            for (int i = 0; i < currentValue.Length; i++)
+                // append current value of all sizes to final sequence
+                finalSequence[row.GetLocation() + i] = (byte)(currentValue[i]);
+        }
         public int InduceError(IcdType row)
         {
             // caluculate actual max size
@@ -142,6 +154,7 @@ namespace simulator_libary.generator
             foreach (IcdType icdRow in icdRows)
             {
                 if ((icdRow.GetMax() - icdRow.GetMin() + 1) != Math.Pow(2, icdRow.GetSize()))
+                    if(icdRow.GetCorrValue() == -1 && icdRow.GetError()==string.Empty)
                     validLocations.Add(icdRow);
             }
 

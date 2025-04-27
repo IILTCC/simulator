@@ -19,7 +19,6 @@ namespace simulator_libary.generator
                         _prevValue.Add(row.GetRowId(), randomParamValue);
 
                     AppendValue(randomParamValue, row, ref finalSequence);
-
                 }
             }
             if (_packetCounter > _curWindowOscillation)
