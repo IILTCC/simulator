@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using simulator_libary.Enums;
+using simulator_libary.icds;
 using simulator_main.dtos;
+using simulator_main.Dtos;
 using simulator_main.services;
+using System.Collections.Generic;
 
 namespace simulator_main.Controllers
 {
@@ -32,6 +35,10 @@ namespace simulator_main.Controllers
         {
             return _BitstreamService.StopSimulator(stopSimulatorDto);
         }
-
+        [HttpGet("getCurrent")]
+        public GetChannelsCurrentDto getCurrentChannels()
+        {
+            return _BitstreamService.GetCurrentChannels();
+        }
     }
 }

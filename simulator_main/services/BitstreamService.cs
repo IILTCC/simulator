@@ -3,6 +3,7 @@ using simulator_libary.Enums;
 using simulator_libary.generator;
 using simulator_libary.icds;
 using simulator_main.dtos;
+using simulator_main.Dtos;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,10 +16,16 @@ namespace simulator_main.services
     {
         private readonly Dictionary<IcdTypes, Channel> _icdDictionary;
         private readonly SocketConnection _telemetryConnection;
+        private readonly Dictionary<IcdTypes, ChannelCurrent> _channelSave;
         public BitstreamService(SocketConnection telemetryConnection)
         {
             _telemetryConnection = telemetryConnection;
             _icdDictionary = new Dictionary<IcdTypes, Channel>();
+            _channelSave = new Dictionary<IcdTypes, ChannelCurrent>();
+            foreach (IcdTypes icdType in Enum.GetValues(typeof(IcdTypes)))
+            {
+                _channelSave[icdType] = new ChannelCurrent(0,0,(int)icdType);
+            }
             InitializeIcdDict();
         }
         public void InitializeIcdDict()
@@ -59,12 +66,20 @@ namespace simulator_main.services
         {
             return BitStreamControl(getSimulationErroDto.PacketDelayAmount, getSimulationErroDto.PacketNoiseAmount, _icdDictionary[getSimulationErroDto.IcdType],getSimulationErroDto.IcdType);
         }
-
+        public GetChannelsCurrentDto GetCurrentChannels()
+        {
+            Dictionary<int, ChannelCurrent> retDict = new Dictionary<int, ChannelCurrent>();
+            foreach(IcdTypes icdType in _channelSave.Keys)
+                retDict[(int)icdType] = _channelSave[icdType];
+            
+            return new GetChannelsCurrentDto(_channelSave);
+        }
         public ReturnStatus StopSimulator(StopSimulatorDto stopSimulatorDto)
         {
             if (_icdDictionary[stopSimulatorDto.IcdType].ChannelToken.IsCancellationRequested)
                 return ReturnStatus.AreadyStopped;
             _icdDictionary[stopSimulatorDto.IcdType].ChannelTokenSource.Cancel();
+            _channelSave[stopSimulatorDto.IcdType] = new ChannelCurrent(0,0,(int)stopSimulatorDto.IcdType);
             return ReturnStatus.Succes;
         }
 
@@ -76,7 +91,7 @@ namespace simulator_main.services
                 channel.ChannelToken = channel.ChannelTokenSource.Token;
             }
             else return ReturnStatus.AlreadyRunning;
-
+            _channelSave[icdType] = new ChannelCurrent(packetDelay, packetNoise,(int)icdType);
             Task.Run(async () => { await SendBitStream(packetDelay, packetNoise, channel, icdType); }, channel.ChannelToken);
             return ReturnStatus.Succes;
         }
